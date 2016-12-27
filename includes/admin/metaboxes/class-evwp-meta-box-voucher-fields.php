@@ -3,6 +3,7 @@
  * Voucher Fields
  *
  * Functions for displaying the voucher fields meta box.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-meta-box-order-data.php
  *
  * @author 		Jose A. Salim
  * @category 	Admin
@@ -60,31 +61,35 @@ class EVWP_Meta_Box_Voucher_Fields {
 
             $fields = $template->get_fields();
             $voucher_fields = $voucher->get_fields();
-            error_log(print_r($voucher_fields, true));
             foreach ( $fields as $field ){
                 echo '<div class="inside">';
                 $id = $field[ 'id' ];
                 $name = substr( $id , 7 ) . ': ';
-                if ( $field[ 'type' ] == 'span' && $id != '_field_guid' ){
-                    echo '<label for="' . $id . '">' . $name;
-                    echo '<input id="' . $id . '" name="' . $id . '" type="text" ' . 
-                        'value="' . ( isset( $voucher_fields->$id ) ? $voucher_fields->$id : '' ) . '"></label>';        
-                }
-                elseif ( $field[ 'type' ] == 'img' ){
-                    $img_src = '';
-                    $img_id = '';
-                    if ( isset( $voucher_fields->$id ) ){
-                        $img_src = wp_get_attachment_url( $voucher_fields->$id );
-                        $img_id = $voucher_fields->$id;
-                    }
+                switch ( $field[ 'name' ] ) {
+                	case 'text':
+                		echo '<label for="' . $id . '">' . $name;
+	                    echo '<input id="' . $id . '" name="' . $id . '" type="text" ' . 
+	                        'value="' . ( isset( $voucher_fields->$id ) ? $voucher_fields->$id : '' ) . '"></label>';  
+                		break;
+                	case 'img':
+                		$img_src = '';
+	                    $img_id = '';
+	                    if ( isset( $voucher_fields->$id ) ){
+	                        $img_src = wp_get_attachment_url( $voucher_fields->$id );
+	                        $img_id = $voucher_fields->$id;
+	                    }
 
-                    echo '<div class="image-preview-wrapper">';
-                    echo '<p>' . $name . '<img class="image-preview" src="' . ( !empty( $img_src ) ? esc_url( $img_src ) : '' ) . '" >';
-                    echo '<input type="hidden" class="input-image"  name="' .  $id .  '" id="' . 
-                        $id . '" value="' . ( !empty( $img_id ) ? $img_id : '' ) . '">';
-                    echo '<input id="upload_image_button" type="button" class="button" value="' . __( 'Select Media' , 'evoucherwp' ) . '"/></p>';
-                    echo '</div>';
+	                    echo '<div class="image-preview-wrapper">';
+	                    echo '<p>' . $name . '<img class="image-preview" src="' . ( !empty( $img_src ) ? esc_url( $img_src ) : '' ) . '" >';
+	                    echo '<input type="hidden" class="input-image"  name="' .  $id .  '" id="' . 
+	                        $id . '" value="' . ( !empty( $img_id ) ? $img_id : '' ) . '"></p>';
+	                    echo '<input id="upload_image_button" type="button" class="button" value="' . __( 'Select Media' , 'evoucherwp' ) . '"/>';
+	                    echo '</div>';
+	                    break;
+                	default:
+                		break;
                 }
+
                 echo '</div>';
             }
 	    }    

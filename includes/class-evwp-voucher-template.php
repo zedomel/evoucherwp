@@ -6,6 +6,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Voucher Template Class.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-product.php
  *
  *
  * @class 		EVWP_Voucher_Template

@@ -3,6 +3,7 @@
  * Voucher Options
  *
  * Functions for displaying the voucher options meta box.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-meta-box-order-data.php
  *
  * @author 		Jose A. Salim
  * @category 	Admin
@@ -43,15 +44,15 @@ class EVWP_Meta_Box_Voucher_Options {
 				'type'  => 'checkbox'
 			),
 			'_codeprefix' => array(
-				'label' => __( 'Voucher code prefix', 'evoucherwp' ),
+				'label' => __( 'Voucher code prefix:', 'evoucherwp' ),
 				'show'  => false
 			),
 			'_codesuffix' => array(
-				'label' => __( 'Vocher code suffix', 'evoucherwp' ),
+				'label' => __( 'Vocher code suffix:', 'evoucherwp' ),
 				'show'  => false
 			),
 			'_codestype' => array(
-				'label'   => __( 'Codes type', 'evoucherwp' ),
+				'label'   => __( 'Codes type:', 'evoucherwp' ),
 				'show'    => false,
 				'class'   => 'select short',
 				'type'    => 'select',
@@ -63,12 +64,12 @@ class EVWP_Meta_Box_Voucher_Options {
 					)  
 			),
 			'_singlecode' => array(
-				'label' => __( 'Single code', 'evoucherwp' ),
+				'label' => __( 'Single code:', 'evoucherwp' ),
 				'class'   => 'hide short',
 				'show'  => false
 			),
 			'_codelength' => array(
-				'label' => __( 'Code length', 'evoucherwp' ),
+				'label' => __( 'Code length:', 'evoucherwp' ),
 				'show' => false,
 				'type' => 'select',
 				'options' => array( '' => __( 'Select code length&hellip;', 'evoucherwp '),
@@ -123,15 +124,15 @@ class EVWP_Meta_Box_Voucher_Options {
 
 
 		echo '<p class="form-field">
-			<label for="_startdate">' . __( 'Date e-voucher starts being avaiable', 'evoucherwp' ) . '</label>
+			<label for="_startdate">' . __( 'Date e-voucher starts being avaiable:', 'evoucherwp' ) . '</label>
 			<input type="text" class="short" name="_startdate" id="_startdate" value="' . esc_attr( $startdate ) . '" placeholder="' . _x( 'Start&hellip;', 'placeholder', 'evoucherwp' ) . ' YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 			</p>
 			<p class="form-field">
-			<label for="_expiry">' . __( 'Date e-voucher expires', 'evoucherwp' ) . '</label>
+			<label for="_expiry">' . __( 'Date e-voucher expires:', 'evoucherwp' ) . '</label>
 			<input type="text" class="short" name="_expiry" id="_expiry" value="' . esc_attr( $expiry ) . '" placeholder="' . _x( 'Expires&hellip;', 'placeholder', 'evoucherwp' ) . '  YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 			</p>
 			<p class="form-field">
-			<label for="_expirydays">' . __( 'Number of days before voucher expires', 'evoucherwp' ) . '</label>
+			<label for="_expirydays">' . __( 'Number of days before voucher expires:', 'evoucherwp' ) . '</label>
 			<input type="text" class="short" name="_expirydays" id="_expirydays" value="" placeholder="' . _x( 'Days&hellip;', 'placeholder', 'evoucherwp' ) . '  YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 		</p>';
 

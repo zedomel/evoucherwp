@@ -8,6 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * EVoucherWP EVWP_AJAX.
  *
  * AJAX Event Handler.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-ajax.php
  *
  * @class    EVWP_AJAX
  * @version  1.0.0
@@ -72,8 +73,6 @@ class EVWP_AJAX {
 	 */
 	public static function do_evwp_ajax() {
 		global $wp_query;
-
-		error_log(print_r($wp_query, true));
 
 		if ( ! empty( $_GET['evwp-ajax'] ) ) {
 			$wp_query->set( 'evwp-ajax', sanitize_text_field( $_GET['evwp-ajax'] ) );

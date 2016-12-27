@@ -1,6 +1,7 @@
 <?php
 /**
  * EVoucherWP Meta Boxes
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-admin-meta-boxes.php
  *
  * Sets up the write panels used by products and orders (custom post types).
  *

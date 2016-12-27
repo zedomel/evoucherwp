@@ -1,6 +1,7 @@
 <?php
 /**
  * Load assets
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-admin-assets.php
  *
  * @author      Jose A. Salim
  * @category    Admin

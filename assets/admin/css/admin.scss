@@ -1,0 +1,42 @@
+.form-field {
+	display: inline-block;
+	width: 48%;
+	padding: 0;
+	margin: 9px 0 0 0;
+
+	label {
+		display: block;
+		padding: 0 0 3px;
+	}
+
+	input,
+	textarea {
+		width: 95%;
+	}
+
+	input.checkbox{
+		width: auto;
+	}
+
+	select {
+		width: 95%;
+	}
+
+	small {
+		display: block;
+		margin: 5px 0 0 0;
+		color: #fff;
+	}
+}
+
+.image-preview{
+	width: 350px;
+	height: auto;
+}
+
+.evoucherwp-url{
+
+	a {
+		float: right;
+	}
+}

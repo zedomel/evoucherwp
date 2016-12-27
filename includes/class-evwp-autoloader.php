@@ -6,7 +6,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * EVoucherWP Autoloader.
- *
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/class-wc-autoloader.php
+ * 
  * @class 		EVWP_Autoloader
  * @version		1.0.0
  * @package		EVoucherWP/Classes
@@ -60,7 +61,7 @@ class EVWP_Autoloader {
 	}
 
 	/**
-	 * Auto-load WC classes on demand to reduce memory consumption.
+	 * Auto-load EVoucherWP classes on demand to reduce memory consumption.
 	 *
 	 * @param string $class
 	 */

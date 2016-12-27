@@ -1,6 +1,7 @@
 <?php
 /**
  * Installation related functions and actions.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-install.php
  *
  * @author   Jose A. Salim
  * @category Admin
@@ -36,7 +37,7 @@ class EVoucherWP_Install {
 	public static function check_version() {
 		if ( ! defined( 'IFRAME_REQUEST' ) && get_option( 'evoucherwp_version' ) !== EVoucherWP()->version ) {
 			self::install();
-			// do_action( 'evoucherwp_updated' );
+			//TODO: do_action( 'evoucherwp_updated' );
 		}
 	}
 
@@ -125,21 +126,6 @@ class EVoucherWP_Install {
 		if ( $wpdb->has_cap( 'collation' ) ) {
 			$collate = $wpdb->get_charset_collate();
 		}
-	
-
-	/* CREATE TABLE {$wpdb->prefix}evoucherwp_vouchers (
-	  post_id mediumint(9) NOT NULL,
-	  guid VARCHAR(36),
-	  security_code VARCHAR(36),
-	  PRIMARY KEY  id (id)
-	) $collate;
-
-	CREATE TABLE {$wpdb->prefix}evoucherwp_templates (
-	  id mediumint(9) NOT NULL,
-	  name VARCHAR(255) NOT NULL,
-	  fields longtext NOT NULL,
-	  PRIMARY KEY  id (id)
-	) $collate;*/
 
 		// table to store the vouchers
 		$tables = "    
@@ -234,10 +220,6 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
 	 private static function get_core_capabilities() {
 		$capabilities = array();
 
-	    //$capabilities['core'] = array(
-	    //        'manage_evoucherwp'
-	    //);
-
 	    $capability_types = array( 'evoucher', 'evoucher_template');
 
 	    foreach ( $capability_types as $capability_type ) {
@@ -256,13 +238,7 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
                     "delete_published_{$capability_type}s",
                     "delete_others_{$capability_type}s",
                     "edit_private_{$capability_type}s",
-                    "edit_published_{$capability_type}s",
-
-                    // Terms
-                    //"manage_{$capability_type}_terms",
-                    //"edit_{$capability_type}_terms",
-                    //"delete_{$capability_type}_terms",
-                    //"assign_{$capability_type}_terms"
+                    "edit_published_{$capability_type}s"
             );
 	    }
 
@@ -351,11 +327,7 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
 	 */
 	public static function wpmu_drop_tables( $tables ) {
 		global $wpdb;
-
-		//$tables[] = $wpdb->prefix . 'evoucherwp_vouchers';
-		//$tables[] = $wpdb->prefix . 'evoucherwp_templates';
 		$tables[] = $wpdb->prefix . 'evoucherwp_downloads';
-
 		return $tables;
 	}
 

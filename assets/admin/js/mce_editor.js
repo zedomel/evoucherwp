@@ -27,7 +27,7 @@
                                 ],
                                 onsubmit: function(e) {
                                     if (e.data.id != ""){
-                                        ed.insertContent('<span id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                        ed.insertContent('<span name="text" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
                                             + '>' + e.data.id + '</span>');
                                     }
                                 }
@@ -46,7 +46,7 @@
                                 ],
                                 onsubmit: function(e) {
                                     if (e.data.id != ""){
-                                        ed.insertContent('<img id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                        ed.insertContent('<img name="img" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
                                             + ' src="' + url + '/../images/placeholder.png"/>');
                                     }
                                 }
@@ -56,9 +56,30 @@
                     {
                         text: 'Add Voucher Number Field',
                         onclick: function(){
-                            ed.insertContent('<span id="' + prefix + 'guid">0123456789</span>');
+                            ed.insertContent('<span name="guid" id="' + prefix + 'guid">0123456789</span>');
                         }
-                    }
+                    },
+                    {
+                        text: 'Add Date Field',
+                        onclick: function(){
+                            // Open window
+                            ed.windowManager.open({
+                                title: 'Add Date Field',
+                                body: [
+                                    {type: 'combobox', name: 'id', label: 'Date type', values: [ 
+                                        { text: 'Expiry date', value: 'expirydate' }, { text: 'Start date', value: 'startdate' } ] },
+                                    {type: 'textbox', name: 'df', label: 'Date format' },
+                                    {type: 'textbox', name: 'class', label: 'CSS Class (optional)'}
+                                ],
+                                onsubmit: function(e) {
+                                    if (e.data.id != ""){
+                                        ed.insertContent('<span name="date" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                            + '>' + ( e.data.df ? e.data.df : 'yyyy/mm/dd' ) + '</span>');
+                                    }
+                                }
+                            });
+                        }
+                    }, 
                     ]
                 });
             },

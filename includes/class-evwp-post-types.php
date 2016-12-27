@@ -3,6 +3,7 @@
  * Post Types
  *
  * Registers post types and taxonomies.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/class-wc-post-types.php
  *
  * @class     EVWP_Post_types
  * @version   1.0.0
@@ -25,7 +26,6 @@ class EVWP_Post_types {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register_post_types' ), 5 );
-		// add_filter( 'rest_api_allowed_post_types', array( __CLASS__, 'rest_api_allowed_post_types' ) );
 	}
 
 	/**
@@ -101,7 +101,7 @@ class EVWP_Post_types {
 	            'show_ui'             => true,
 	            'capability_type'     => array('evoucher', 'evouchers'),
 	            'map_meta_cap'        => true,
-	            'publicly_queryable'  => false,
+	            'publicly_queryable'  => true,
 	            'exclude_from_search' => true,
 	            'show_in_menu'        => current_user_can( 'edit_evouchers' ) ? 'evoucherwp' : true,
 	            'hierarchical'        => false,
@@ -113,19 +113,6 @@ class EVWP_Post_types {
 	        )
 	    );
 	}
-
-	/**
-	 * Added product for Jetpack related posts.
-	 *
-	 * @param  array $post_types
-	 * @return array
-	 *
-	public static function rest_api_allowed_post_types( $post_types ) {
-		$post_types[] = 'product';
-
-		return $post_types;
-	}
-	*/
 }
 
 EVWP_Post_types::init();

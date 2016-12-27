@@ -3,12 +3,12 @@
 /**
  * Plugin Name: EVoucherWP
  * Plugin URI: https://github.com/zedomel/evoucherwp
- * Description: EVoucherWP allows you to offer downloadable, printable vouchers from your Wordpress site. E-vouchers can be available to anyone, or require a name and email address before they can be downloaded, or even, sent by e-mail.
+ * Description: EVoucherWP allows you to offer downloadable, printable vouchers from your Wordpress site. E-vouchers can be available to anyone, or require a name and email address before they can be downloaded. The vouchers are secure by a GUID and a SECURITY CODE which must have been provided to allow donwload and visualizaiton of a e-voucher. 
  * Author: José Augusto Salim
  * Version: 1.0.0
  * Author URI: https://github.com/zedomel/
  *
- *
+ * This file was adapted from: https://github.com/woocommerce/woocommerce/blob/master/woocommerce.php
  * @package EVoucherWP
  * @author José Augusto Salim
  * @version 1.0.0
@@ -42,14 +42,6 @@ final class EVoucherWP {
 	 * @since 1.0
 	 */
 	protected static $_instance = null;
-
-
-	/**
-	 * PDF Voucher Factory
-	 * 
-	 * @var EVWP_PDF_Voucher_Factory
-	*/
-	public $pdf_factory = null;
 
 	/**
 	 * Main EVoucher Instance.
@@ -138,9 +130,7 @@ final class EVoucherWP {
 	 */
 	public function includes() {
 		include_once( 'includes/class-evwp-autoloader.php' );
-
 		include_once( 'includes/evwp-voucher-functions.php' );
-
 		include_once( 'includes/class-evwp-install.php' );
 		include_once( 'includes/class-evwp-ajax.php' );
 
@@ -173,7 +163,7 @@ final class EVoucherWP {
 	 * Include required frontend files.
 	 */
 	public function frontend_includes() {
-
+		include_once( 'includes/class-evwp-template-loader.php' );                // Template Loader
 	}
 
 	/**
@@ -186,9 +176,6 @@ final class EVoucherWP {
 		// Set up localisation.
 		$this->load_plugin_textdomain();
 
-		// Load class instances.
-		//$this->pdf_factory = new EVWP_PDF_Voucher_Factory();
-
 		// Init action.
 		do_action( 'evoucherwp_init' );
 	}
@@ -199,8 +186,8 @@ final class EVoucherWP {
 	 * Note: the first-loaded translation file overrides any following ones if the same translation is present.
 	 *
 	 * Locales found in:
-	 *      - WP_LANG_DIR/woocommerce/woocommerce-LOCALE.mo
-	 *      - WP_LANG_DIR/plugins/woocommerce-LOCALE.mo
+	 *      - WP_LANG_DIR/evoucherwp/evoucherwp-LOCALE.mo
+	 *      - WP_LANG_DIR/plugins/evoucherwp-LOCALE.mo
 	 */
 	public function load_plugin_textdomain() {
 		$locale = apply_filters( 'plugin_locale', get_locale(), 'evoucherwp' );

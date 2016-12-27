@@ -14,35 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-function handle_voucher_request() {
-    // if requesting a voucher
-    if ( isset( $_GET["evoucher"] ) && "" != $_GET["evoucher"] ) {
-        // get the details
-        $voucher_guid = $_GET["evoucher"];
-        $security_code = $_GET["sc"];
-        $voucher_id = $_GET["id"];
-
-        // check the template exists
-        $status = voucher_is_valid( $voucher_id, $voucher_guid, $security_code );
-        if ( $status  === 'valid' ) {
-            //download_voucher( $voucher_id );
-            render_voucher( $voucher_id );
-        }
-        elseif ( $status === 'unregistered' ) {
-            // show the form
-            register_form( $voucher_guid );
-        }
-        else{
-            evwp_404( $status );
-        }
-        exit();
-    }
-    
-}
-add_action( "template_redirect", "handle_voucher_request" );
-
+//TODO: doc-me
 function render_voucher( $voucher_id ){
-    require_once( 'admin/externals/simple_html_dom.php' );
+    require_once( 'externals/simple_html_dom.php' );
 
     $voucher = new EVWP_Voucher( $voucher_id );
 
@@ -56,36 +30,71 @@ function render_voucher( $voucher_id ){
                 $elems = $html->find('span[id^=_field_], img[id^=_field_]');
                 foreach ( $elems as $elem ) {
                     $id = $elem->id;
-                    if ( isset( $fields->$id ) ){
-
-                        switch ( $elem->tag ) {
-                            case 'span':
-                                if ( $id == '_field_guid' ){
-                                    $elem->plaintext = esc_html( $thevoucher->guid );
-                                }
-                                else{
-                                    $elem->plaintext = esc_html( $fields->$id );
-                                }
-                                break;
-                            case 'img':
+                    switch ( $elem->name ) {
+                        case 'text':
+                            if ( isset( $fields->$id ) ){
+                                $html->find( '#' . $id, 0 )->innertext = esc_html( $fields->$id );
+                            }
+                            break;
+                        case 'img':
+                            if ( isset( $fields->$id ) ){
                                 $img_src = wp_get_attachment_url( $fields->$id );
-                                $elem->src = esc_url( $img_src );
-                                break;
-                        }
+                                $html->find( '#' . $id, 0 )->src = esc_url( $img_src );
+                            }
+                            break;
+                        case 'guid':
+                            $html->find( '#' . $id )->innertext = esc_html( $voucher->guid );
+                            break;
+                        case 'date':
+                            $df = 'Y-m-d';
+                            if ( !empty( $elem->innertext ) ){
+                                $df = $elem->innertext;
+                            }
+
+                            $date = 0;
+                            if ( $id == 'startdate' ){
+                                $date = $voucher->startdate;
+                            }
+                            elseif ( $id == 'expirydate' ){
+                                $date = $voucher->expiry;
+                            }
+
+                            if ( $date > 0 ){
+                                $html->find( '#' . $id )->innertext = date_i18n( $df, $date );
+                            }
+                            else{
+                                $html->find( '#' . $id )->innertext = '';   
+                            }
+                            break;
                     }
                 }
 
-                $str_html = $html;
-                echo generate_html_page( $str_html, $voucher, $template );
+                $str_html = $html->save();
+                $css = get_post_meta( $template->id, '_template_css', true );
+                $css .= '.button{ color: #fff;
+                        background-color: #337ab7;
+                        border-color: #2e6da4;
+                        display: inline-block;
+                        padding: 6px 12px;
+                        margin-bottom: 0;
+                        font-size: 14px;
+                        font-weight: 400;
+                        line-height: 1.42857143;
+                        text-align: center;
+                        white-space: nowrap;
+                        vertical-align: middle;
+                        border: 1px solid transparent;
+                        border-radius: 4px;';
+                echo '<html><head><style>' . esc_attr( $css ) . '</style></head><body>' . $str_html . '</body></html>';
+                $html->clear();
+
+                echo '<a  class="button" href="javascript:window.print()">' . __('Print E-Voucher', 'evoucherwp' ) . '</a>';
             }
         }
     }
 }
+add_action( 'evoucherwp_create_voucher_html', 'render_voucher', 10 );
 
-function generate_html_page( $html, $voucher, $template ){
-    $css = get_post_meta( $template->id, '_template_css', true );
-    return '<html><head><style>' . esc_attr( $css ) . '</style></head><body>' . $html . '</body></html>';
-}
 
 
 // check a code address is valid for a voucher
@@ -132,110 +141,42 @@ function evwp_generate_guid( $length = 6 ) {
     }
 }
 
-// download a voucher
-function download_voucher( $voucher_id ) {
-    
-    $voucher = new EVWP_Voucher( $voucher_id );
-    if ( is_object( $voucher ) && 1 == $voucher->live && !empty( $voucher->template ) && evwp_template_exists( $voucher->template ) ) {
-    
-        // if this is not a standard POST/GET request then just return the headers
-        if ( strtolower( $_SERVER['REQUEST_METHOD'] ) != 'post' && strtolower( $_SERVER['REQUEST_METHOD'] ) != 'get' ) {
-            $slug = voucherpress_slug( $voucher->get_title() );
-            header( "Expires: Mon, 26 Jul 1997 05:00:00 GMT" );
-            header( "Last-Modified: " . gmdate( "D, d M Y H:i:s" ) . " GMT" );
-            header( "Cache-Control: no-store, no-cache, must-revalidate" );
-            header( "Cache-Control: post-check=0, pre-check=0", false );
-            header( "Pragma: no-cache" );
-            header( 'Content-type: application/octet-stream' );
-            header( 'Content-Disposition: attachment; filename="' . $slug . '.pdf"' );
-            return;
-        }
-    
-        ob_start();
-        if ( strlen( trim( ob_get_contents() ) ) == 0 ) {
-            
-            // set this download as completed
-            evoucherwp_register_download( $voucher );
-
-            do_action( "evoucherwp_download", $voucher );
-
-            // render the voucher
-            //EVoucherWP()->pdf_factory->generate_pdf( $voucher );
-        
-        } else {
-            headers_sent();
-        }
-        ob_end_flush();
-
-    } else {
-        // this voucher is not available
-        print "<!-- The voucher could not be found -->";
-        evwp_404( false );
-    }
-}
-
 function evwp_template_exists( $template_id ){
 	$template = new EVWP_Voucher_Template( $template_id );
 	return $template->exists();
 }
 
-// person functions
-// show the registration form
-function register_form( $voucher, $plain = false ) {
+/**
+*/
+function registered_message( $voucher_id, $success, $email = '', $name = '' ){
 
-    $out = "";
-    $showform = true;
-
-    if ( !$plain ) {
-        get_header();
-        echo '<div id="content" class="narrowcolumn" role="main">
-        <div class="post category-uncategorized" id="voucher-' . $voucher->guid . '">';
+    if ( $success === true ){
+        echo '<p>' . sprintf( __( 'Thank you for registering. You will shortly receive the download link of your voucher in the e-mail %s. Please, check your inbox', 'evoucherwp' ), trim( $email ) ) . '</p>';
     }
-
-    // if registering
-    if ( "" != @$_POST["_email"] && "" != @$_POST["_name"] ) {
-
-        // if the email address is valid
-        if ( is_email( trim( $_POST["_email"] ) ) ) {
-
-            // register the email address
-            $download_guid = save_download( $voucher, trim( $_POST["_email"] ), trim( $_POST["_name"] ) );
-            // if the guid has been generated
-            if ( !empty( $download_guid ) ) {
-
-                echo '<p>' . sprintf( __( 'Thank you for registering. You will shortly receive the download link of your voucher in the e-mail %s. Please, check your inbox', 'evoucherwp' ), trim( $_POST["_email"] ) ) . "\n\n" . $voucher->get_download_url( false ) . '</p>';
-
-                // send the email
-                wp_mail( trim( $_POST["_email"] ), $voucher->get_title() . " for " . trim( $_POST["_name"] ), $message );
-
-                do_action( "evoucherwp_register", $voucher, $_POST["_email"], $_POST["_name"], $message );
-
-                $showform = false;
-            } else {
-                echo '<p>' . __( "Sorry, we can't process your registration. Have you already registered to download this e-voucher? Please try again.", "evoucherwp" ) . '</p>';
-            }
-        } else {
-            echo  '<p>' . __( 'Sorry, provide a valid e-mail address. Please try again.', 'evoucherwp' ) . '</p>';
-        }
-    }
-
-    if ( $showform ) {
-            echo '<h2>' . __( "Please provide some details", "voucherpress" ) . '</h2>';
-			echo '<p>' . __( "To download this voucher you must provide your name and email address. You will then receive a link by email to download your personalised voucher.", "voucherpress" ) . '</p>';
-			echo '<form action="' . esc_url( $voucher->get_download_url() ) . '" method="post" class="voucherpress_form">';
-
-        echo '<p><label for="voucher_email">' . __( "Your e-mail:", "evoucherwp" ) . '</label>';
-		echo '<input type="text" name="_email" id="_email" value="' . trim( @$_POST[ '_email' ] ) . '" /></p>';
-		echo '<p><label for="_name">' . __( "Your full name", "evoucherwp" ) . '</label>';
-		echo '<input type="text" name="_name" id="_name" value="' . trim( @$_POST[ '_name' ] ) . '" /></p>';
-		echo '<p><input type="submit" name="voucher_submit" id="voucher_submit" value="' . __( "Register to download the e-voucher", "evoucherwp" ) . '" /></p></form>';
-    }
-
-    if ( !$plain ) {
-        echo '</div></div>';
-        get_footer();
+    else{
+        echo '<p>' . __( "Sorry, we can't process your registration. Have you already registered to download this e-voucher? Please try again.", "evoucherwp" ) . '</p>';
     }
 }
+add_action( 'evoucherwp_registered', 'registered_message', 10, 3 );
+
+// person functions
+// show the registration form
+function register_form( $voucher_id, $email = '', $name = '' ) {
+
+    $voucher = new EVWP_Voucher( $voucher_id );
+    if ( isset( $voucher ) ){
+        echo '<h2>' . __( "Please provide some details", "voucherpress" ) . '</h2>';
+        echo '<p>' . __( "To download this voucher you must provide your name and email address. You will then receive a link by email to download your personalised voucher.", "voucherpress" ) . '</p>';
+        echo '<form action="' . esc_url( $voucher->get_download_url() ) . '" method="post" class="voucherpress_form">';
+
+        echo '<p><label for="voucher_email">' . __( "Your e-mail:", "evoucherwp" ) . '</label>';
+        echo '<input type="text" name="_email" id="_email" value="' . trim( $email ) . '" /></p>';
+        echo '<p><label for="_name">' . __( "Your full name", "evoucherwp" ) . '</label>';
+        echo '<input type="text" name="_name" id="_name" value="' . trim( $name ) . '" /></p>';
+        echo '<p><input type="submit" name="voucher_submit" id="voucher_submit" value="' . __( "Register to download the e-voucher", "evoucherwp" ) . '" /></p></form>';
+    }
+}
+add_action( 'evoucherwp_voucher_form', 'register_form', 10, 3 );
 
 // save to download name and email address
 function save_download( $voucher, $email, $name ) {

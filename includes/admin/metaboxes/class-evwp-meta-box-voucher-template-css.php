@@ -3,6 +3,7 @@
  * Voucher Fields
  *
  * Functions for displaying the voucher template CSS meta box.
+ * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-meta-box-order-data.php
  *
  * @author 		Jose A. Salim
  * @category 	Admin
@@ -47,7 +48,6 @@ class EVWP_Meta_Box_Voucher_Template_CSS {
 	 * @param WP_Post $post
 	 */
 	public static function save( $post_id, $post ) {
-		error_log( print_r($_POST, true ) );
 		if ( isset( $_POST[ '_template_css' ] ) && !empty( $_POST[ '_template_css' ] ) ){
 			update_post_meta( $post_id, '_template_css', $_POST[ '_template_css' ] );
 		}
