@@ -51,9 +51,8 @@ class EVWP_Meta_Box_Voucher_Fields {
 
 	    echo '<div id="evoucherwp_fields">';
 	    if ( !empty( $template_id ) ) { 
-	    	// $template = $wpdb->get_row( $wpdb->prepare( "SELECT id, fields FROM {$wpdb->prefix}evoucherwp_templates WHERE id = %d", inval( $template_id ) ) );
 	    	$template = new EVWP_Voucher_Template( $template_id );
-            $voucher = new EVWP_Voucher( $post->ID ); //get_post_meta( $post->ID, '_fields', true );
+            $voucher = new EVWP_Voucher( $post->ID );
             
             // Get URL from GUID
             $url = $voucher->get_download_url();
@@ -65,7 +64,8 @@ class EVWP_Meta_Box_Voucher_Fields {
                 echo '<div class="inside">';
                 $id = $field[ 'id' ];
                 $name = substr( $id , 7 ) . ': ';
-                switch ( $field[ 'name' ] ) {
+                
+                switch ( $field[ 'data-type' ] ) {
                 	case 'text':
                 		echo '<label for="' . $id . '">' . $name;
 	                    echo '<input id="' . $id . '" name="' . $id . '" type="text" ' . 
@@ -126,8 +126,7 @@ class EVWP_Meta_Box_Voucher_Fields {
 	        //Generate and save e-voucher GUID
 	        //TODO: move from here!
 	        $guid = get_post_meta( $post_id, '_guid', true );
-	        // $sql = $wpdb->prepare( 'SELECT guid FROM ' . $wpdb->prefix . 'evoucherwp_vouchers WHERE post_id = %d', $post_id );
-	        // $guid = $wpdb->get_var( $sql );
+
 	        if ( empty( $guid ) ){
 	        	$codestype = $_POST[ '_codestype' ];
 	            if ( $codestype == 'single' ){

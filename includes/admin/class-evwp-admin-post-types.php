@@ -60,9 +60,17 @@ class EVWP_Admin_Post_Types {
 
 		add_filter( 'mce_external_plugins', array( $this, 'add_mce_buttons' ) );
         add_filter( 'mce_buttons',  array( $this, 'register_mce_buttons' ) );
+        add_filter( 'mce_external_languages', array( $this, 'mce_plugin_add_locale' ) );
         add_filter( 'mce_css', array( $this, 'load_editor_custom_css' ) );
 	}
 
+	public function mce_plugin_add_locale( $locales ){
+		global $post;
+	    if ( $post->post_type === 'evoucher_template' ){
+			$locales['evoucherwp'] = EVoucherWP()->plugin_path() . '/includes/evwp-tinymce-plugin-langs.php';
+		}
+	    return $locales;
+	}
 
 	public function add_mce_buttons( $plugin_array ){
 		global $post;
@@ -114,7 +122,7 @@ class EVWP_Admin_Post_Types {
 	    }
 
 	    // Extracts all fileds from post content
-	    require_once ( '../externals/simple_html_dom.php' );
+	    require_once ( EVoucherWP()->plugin_path() . '/includes/externals/simple_html_dom.php' );
 
 	    $html = str_get_html( $post->post_content );
 	    $elems = $html->find('span[id^=_field_], img[id^=_field_]');
@@ -122,8 +130,8 @@ class EVWP_Admin_Post_Types {
 	    foreach ( $elems as $elem ) {
 	        $data[] = array(
 	            'id' => $elem->id,
-	            'type' => $elem->tag,
-	            'name' => $elem->name,
+	            'tag' => $elem->tag,
+	            'data-type' => $elem->getAttribute( 'data-type' ),
 	            'class' => ( isset( $elem->class) && !empty( $elem->class ) ) ? $elem->class :  NULL
 	        );
 	    }

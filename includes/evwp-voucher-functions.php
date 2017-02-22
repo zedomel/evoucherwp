@@ -30,7 +30,7 @@ function render_voucher( $voucher_id ){
                 $elems = $html->find('span[id^=_field_], img[id^=_field_]');
                 foreach ( $elems as $elem ) {
                     $id = $elem->id;
-                    switch ( $elem->name ) {
+                    switch ( $elem->getAttribute( 'data-type' ) ) {
                         case 'text':
                             if ( isset( $fields->$id ) ){
                                 $html->find( '#' . $id, 0 )->innertext = esc_html( $fields->$id );
@@ -43,27 +43,31 @@ function render_voucher( $voucher_id ){
                             }
                             break;
                         case 'guid':
-                            $html->find( '#' . $id )->innertext = esc_html( $voucher->guid );
+                            $prefix = $voucher->codeprefix;
+                            $suffix = $voucher->codesuffix;
+                            foreach ( $html->find( '#' . $id ) as $elem ) {
+                                $elem->innertext = esc_html( $prefix . $voucher->guid . $suffix );
+                            }
                             break;
                         case 'date':
-                            $df = 'Y-m-d';
-                            if ( !empty( $elem->innertext ) ){
-                                $df = $elem->innertext;
-                            }
-
+                            $df = $elem->getAttribute( 'data-df' );    
                             $date = 0;
-                            if ( $id == 'startdate' ){
+                            if ( $id == '_field_startdate' ){
                                 $date = $voucher->startdate;
                             }
-                            elseif ( $id == 'expirydate' ){
+                            elseif ( $id == '_field_expirydate' ){
                                 $date = $voucher->expiry;
                             }
 
                             if ( $date > 0 ){
-                                $html->find( '#' . $id )->innertext = date_i18n( $df, $date );
+                                foreach ( $html->find( '#' . $id ) as $elem ) {
+                                    $elem->innertext = date_i18n( $df, $date );
+                                }
                             }
                             else{
-                                $html->find( '#' . $id )->innertext = '';   
+                                foreach( $html->find( '#' . $id ) as $elem) {
+                                    $elem->innertext = '';   
+                                }
                             }
                             break;
                     }
@@ -225,15 +229,15 @@ function get_user_ip() {
 function evwp_404( $found = true ) {
     global $wp_query;
     $wp_query->set_404();
-    //if ( file_exists( TEMPLATEPATH.'/404.php' ) ) {
-    //  require TEMPLATEPATH.'/404.php';
-    //} else {
-    if ( $found ) {
-        wp_die( __( "Sorry, that item is not available", "evoucherwp" ) );
-    } else {
-        wp_die( __( "Sorry, that item was not found", "evoucherwp" ) );
+    if ( file_exists( get_stylesheet_directory() .'/404.php' ) ) {
+      require get_stylesheet_directory() .'/404.php';
     }
-    //}
+    
+    if ( $found ) {
+        wp_die( '<h1>' . __( "Sorry, that voucher is not available", "evoucherwp" ) . '</h1>');
+    } else {
+        wp_die( __( "Sorry, that voucher was not found", "evoucherwp" ) );
+    }
     exit();
 }
 

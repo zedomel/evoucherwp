@@ -136,7 +136,7 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
   ip VARCHAR(15) NOT NULL,
   name VARCHAR(55) NULL,
   email varchar(255) NULL,
-  guid varchar(36) NOT NULL
+  guid varchar(36) NOT NULL,
   PRIMARY KEY  id (id)
 ) $collate;
 	";

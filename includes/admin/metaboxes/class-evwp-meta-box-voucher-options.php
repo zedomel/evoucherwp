@@ -65,7 +65,8 @@ class EVWP_Meta_Box_Voucher_Options {
 			),
 			'_singlecode' => array(
 				'label' => __( 'Single code:', 'evoucherwp' ),
-				'class'   => 'hide short',
+				'class'   => 'short',
+				'wrapper_class' => 'hide',
 				'show'  => false
 			),
 			'_codelength' => array(
@@ -121,10 +122,8 @@ class EVWP_Meta_Box_Voucher_Options {
 		$startdate = ( $date = get_post_meta( $post->ID, '_startdate', true ) ) ? date_i18n( 'Y-m-d', $date ) : '';
 		$expiry   = ( $date = get_post_meta( $post->ID, '_expiry', true ) ) ? date_i18n( 'Y-m-d', $date ) : '';
 
-
-
 		echo '<p class="form-field">
-			<label for="_startdate">' . __( 'Date e-voucher starts being avaiable:', 'evoucherwp' ) . '</label>
+			<label for="_startdate">' . __( 'Date e-voucher starts being available:', 'evoucherwp' ) . '</label>
 			<input type="text" class="short" name="_startdate" id="_startdate" value="' . esc_attr( $startdate ) . '" placeholder="' . _x( 'Start&hellip;', 'placeholder', 'evoucherwp' ) . ' YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 			</p>
 			<p class="form-field">
@@ -133,7 +132,7 @@ class EVWP_Meta_Box_Voucher_Options {
 			</p>
 			<p class="form-field">
 			<label for="_expirydays">' . __( 'Number of days before voucher expires:', 'evoucherwp' ) . '</label>
-			<input type="text" class="short" name="_expirydays" id="_expirydays" value="" placeholder="' . _x( 'Days&hellip;', 'placeholder', 'evoucherwp' ) . '  YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
+			<input type="text" class="short" name="_expirydays" id="_expirydays" value="" placeholder="' . _x( 'Days&hellip;', 'placeholder', 'evoucherwp' ) . ' YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
 		</p>';
 
 

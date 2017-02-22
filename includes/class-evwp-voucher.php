@@ -174,13 +174,12 @@ class EVWP_Voucher {
 
 	public function get_download_url( $encode = true ){
 		$append = $encode ? '&amp;' : '&';
-		$id = $append . 'id=' . urlencode( $this->id );
 		$security_code = '';
     	if ( "" != $this->security_code ) {
     		$security_code = $append . "sc=" . urlencode( $this->security_code );
 	    }
     	if ( !empty( $this->guid ) ) {
-		    return get_permalink() . "/?evoucher=" . $this->guid . $id . $security_code;   
+		    return get_permalink() . "/?evoucher=" . $this->guid . $security_code;   
 		}
 		return false;
 	}
