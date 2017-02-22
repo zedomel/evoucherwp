@@ -18,6 +18,7 @@ if ( isset( $_GET[ 'evoucher' ] ) && ! empty( $_GET[ 'evoucher' ] ) ) {
     $status = voucher_is_valid( $post->ID, $voucher_guid, $security_code );
 }
 
+error_log($status);
 
 if ( $status === 'valid'){
 
