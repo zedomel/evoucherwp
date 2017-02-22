@@ -13,21 +13,21 @@
             init : function(ed, url) {
                 ed.addButton('addfield', {
                     type: 'menubutton',
-                    title: 'Add Template Field',
+                    title: ed.getLang('evoucherwp.add_template_field'),
                     image: url + '/../images/addfield.png',
                     menu: [{
-                        text: 'Add Text Field',
+                        text: ed.getLang('evoucherwp.add_text_field'),
                         onclick: function(){
                             // Open window
                             ed.windowManager.open({
-                                title: 'Add Text Field',
+                                title: ed.getLang('evoucherwp.add_text_field'),
                                 body: [
-                                    {type: 'textbox', name: 'id', label: 'Field name'},
-                                    {type: 'textbox', name: 'class', label: 'CSS Class (optional)'}
+                                    {type: 'textbox', name: 'id', label: ed.getLang('evoucherwp.lbl_field_name') },
+                                    {type: 'textbox', name: 'class', label: ed.getLang('evoucherwp.lbl_css_class') }
                                 ],
                                 onsubmit: function(e) {
                                     if (e.data.id != ""){
-                                        ed.insertContent('<span name="text" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                        ed.insertContent('<span data-type="text" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
                                             + '>' + e.data.id + '</span>');
                                     }
                                 }
@@ -35,18 +35,18 @@
                         }
                     }, 
                     {
-                        text: 'Add Image Placeholder',
+                        text: ed.getLang('evoucherwp.add_image_field'),
                         onclick: function(){
                             // Open window
                             ed.windowManager.open({
-                                title: 'Add Image Placeholder',
+                                title: ed.getLang('evoucherwp.add_image_field'),
                                 body: [
-                                    {type: 'textbox', name: 'id', label: 'Field Name', },
-                                    {type: 'textbox', name: 'class', label: 'CSS Class (optional)'}
+                                    {type: 'textbox', name: 'id', label: ed.getLang('evoucherwp.lbl_field_name') },
+                                    {type: 'textbox', name: 'class', label: ed.getLang('evoucherwp.lbl_css_class') }
                                 ],
                                 onsubmit: function(e) {
                                     if (e.data.id != ""){
-                                        ed.insertContent('<img name="img" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                        ed.insertContent('<img data-type="img" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
                                             + ' src="' + url + '/../images/placeholder.png"/>');
                                     }
                                 }
@@ -54,27 +54,29 @@
                         }
                     },
                     {
-                        text: 'Add Voucher Number Field',
+                        text: ed.getLang('evoucherwp.add_guid_field'),
                         onclick: function(){
-                            ed.insertContent('<span name="guid" id="' + prefix + 'guid">0123456789</span>');
+                            ed.insertContent('<span data-type="guid" id="' + prefix + 'guid">0123456789</span>');
                         }
                     },
                     {
-                        text: 'Add Date Field',
+                        text: ed.getLang('evoucherwp.add_date_field'),
                         onclick: function(){
                             // Open window
                             ed.windowManager.open({
-                                title: 'Add Date Field',
+                                title: ed.getLang('evoucherwp.add_date_field'),
                                 body: [
-                                    {type: 'combobox', name: 'id', label: 'Date type', values: [ 
-                                        { text: 'Expiry date', value: 'expirydate' }, { text: 'Start date', value: 'startdate' } ] },
-                                    {type: 'textbox', name: 'df', label: 'Date format' },
-                                    {type: 'textbox', name: 'class', label: 'CSS Class (optional)'}
+                                    {type: 'combobox', name: 'id', label: ed.getLang('evoucherwp.lbl_date_type'), values: [ 
+                                        { text: ed.getLang('evoucherwp.lbl_date_op_expiry'), value: 'expirydate' }, 
+                                        { text: ed.getLang('evoucherwp.lbl_date_op_start'), value: 'startdate' } ] },
+                                    {type: 'textbox', name: 'df', label: ed.getLang('evoucherwp.lbl_date_df') },
+                                    {type: 'textbox', name: 'class', label: ed.getLang('evoucherwp.lbl_css_class')}
                                 ],
                                 onsubmit: function(e) {
                                     if (e.data.id != ""){
-                                        ed.insertContent('<span name="date" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
-                                            + '>' + ( e.data.df ? e.data.df : 'yyyy/mm/dd' ) + '</span>');
+                                        $df = ( e.data.df ? e.data.df : 'Y/m/d' );
+                                        ed.insertContent('<span data-type="date" id="' + prefix + e.data.id + '"' + ( e.data.class != "" ? 'class="' + e.data.class + '"' : "" ) 
+                                            + 'data-df="' + $df + '">' + $df + '</span>');
                                     }
                                 }
                             });

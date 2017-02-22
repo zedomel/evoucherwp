@@ -19,28 +19,25 @@ jQuery(document).ready(function( $ ){
                             var container = jQuery('#evoucherwp_fields');
                             container.empty();
                             jQuery.each( data.fields, function( index, item ){
-                                if ( item.id != '_field_guid'){
+                                if ( item['data-type'] != 'guid' && item['data-type'] != 'date'){
                                     var html = '<div class="inside">';
                                     var name = item.id.substr(7) + ': ';
-                                    if ( item.type == 'span' ){
+                                    if ( item.tag == 'span' ){
                                         html += '<label for="' + item.id + '">' + name;
                                         html += '<input id="' + item.id + '" name="' + item.id +  '" type="text"></label>';        
                                     }
-                                    else if (item.type == 'img' ){
+                                    else if (item.tag == 'img' ){
                                         html += '<div class="image-preview-wrapper">';
                                         html += '<p>' + name + '<img class="image-preview" src="" >';
                                         html += '<input type="hidden" class="input-image"  name="' + item.id +  '" id="' + item.id + '" value="">';
-                                        html += '<input id="upload_image_button" type="button" class="button" value="Select Media"/></p>';
+                                        html += '<input id="upload_image_button" type="button" class="button" value="' + evoucherwp_i18n['i18n_upload_btn'] +'"/></p>';
                                         html += '</div>';
                                     }
                                     html += '</div>';
                                     container.append(html);
                                 }
                             });
-                            //var okBtn = '<div class="evoucherwp-btn"><input id="create-voucher-btn" type="button" ' +
-                            //   'class="button button-primary button-large" value="Create Voucher"/></div>';
-                            //container.append(okBtn);
-
+                            
                             jQuery("#upload_image_button").on('click', function( event ){
 
                                 event.preventDefault();
@@ -58,9 +55,9 @@ jQuery(document).ready(function( $ ){
                                 }
 
                                 file_frame = wp.media.frames.file_frame = wp.media({
-                                    title: 'Select a image',
+                                    title: evoucherwp_i18n['i18n_media_title'],
                                     button: {
-                                        text: 'Use this image'
+                                        text: evoucherwp_i18n['i18n_media_btn']
                                     },
                                     multiple: false
                                 });
@@ -80,10 +77,22 @@ jQuery(document).ready(function( $ ){
                             
                         }
                         else{
-                            jQuery('.change-voucher').prepend('<div class="woocommerce-message">' + data.message + '</div>');
+                            jQuery('.change-voucher').prepend('<div class="evoucherwp-message">' + data.message + '</div>');
                         }
                     }
                 });
+        }
+    });
+});
+
+jQuery(document).ready(function( $ ){
+    jQuery('._codestype_field').change( function(){
+        var selected = jQuery('._codestype_field select option:selected').val();
+        if ( selected == 'single'){
+            jQuery('._singlecode_field').removeClass('hide');
+        }
+        else{
+            jQuery('._singlecode_field').addClass('hide');   
         }
     });
 });
