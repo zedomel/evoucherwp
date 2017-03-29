@@ -39,51 +39,14 @@ class EVWP_Post_types {
 
 	    do_action( 'evoucherwp_register_post_type' );
 
-	    register_post_type( 'evoucher_template', 
-	        array(
-	            'labels'    => array(
-	                'name'                  =>  __('Vouchers Templates', 'evoucherwp'),
-	                'singular_name'         => __('Voucher Template', 'evoucherwp'),
-	                'menu_name'             => _x('Vouchers Templates', 'Admin menu name', 'evoucherwp'),
-	                'add_new'               => __( 'Add Template', 'evoucherwp' ),
-	                'add_new_item'          => __( 'Add New Template', 'evoucherwp' ),
-	                'edit'                  => __( 'Edit', 'evoucherwp' ),
-	                'edit_item'             => __( 'Edit Template', 'evoucherwp' ),
-	                'new_item'              => __( 'New Template', 'evoucherwp' ),
-	                'view'                  => __( 'View Template', 'evoucherwp' ),
-	                'view_item'             => __( 'View Template', 'evoucherwp' ),
-	                'search_items'          => __( 'Search Template', 'evoucherwp' ),
-	                'not_found'             => __( 'No Templates found', 'woocommerce' ),
-	                'not_found_in_trash'    => __( 'No Templates found in trash', 'evoucherwp' ),
-	                'filter_items_list'     => __( 'Filter templates', 'evoucherwp' ),
-	                'items_list_navigation' => __( 'Templates navigation', 'evoucherwp' ),
-	                'items_list'            => __( 'Templates list', 'evoucherwp' ),
-	                ),
-	            'description'         => __( 'This is where you can add new templates.', 'evoucherwp' ),
-	            'public'              => false,
-	            'show_ui'             => true,
-	            'capability_type'     => array( 'evoucher_template', 'evoucher_templates' ),
-	            'map_meta_cap'        => true,
-	            'publicly_queryable'  => false,
-	            'exclude_from_search' => true,
-	            'show_in_menu'        => current_user_can( 'edit_evoucher_templates' ) ? 'evoucherwp' : true,
-	            'hierarchical'        => false,
-	            'show_in_nav_menus'   => false,
-	            'rewrite'             => array( 'slug' => untrailingslashit( 'evoucher-template' ), 'with_front' => false, 'feeds' => true ),
-	            'query_var'           => false,
-	            'supports'            => array( 'title', 'editor' ),
-	            'has_archive'         => false,
-	        )
-	    );
-
 	    register_post_type( 'evoucher', 
 	        array(
 	            'labels'    => array(
 	                'name'                  =>  __('Vouchers', 'evoucherwp'),
 	                'singular_name'         => __('Voucher', 'evoucherwp'),
-	                'menu_name'             => _x('Vouchers', 'Admin menu name', 'evoucherwp'),
+	                'menu_name'             => _x('Vouchers', 'Admin menu name', 'evoucherwp' ),
 	                'add_new'               => __( 'Create Voucher', 'evoucherwp' ),
-	                'add_new_item'          => __( 'Create New Template', 'evoucherwp' ),
+	                'add_new_item'          => __( 'Create New Voucher', 'evoucherwp' ),
 	                'edit'                  => __( 'Edit', 'evoucherwp' ),
 	                'edit_item'             => __( 'Edit Voucher', 'evoucherwp' ),
 	                'new_item'              => __( 'New Voucher', 'evoucherwp' ),
@@ -103,14 +66,16 @@ class EVWP_Post_types {
 	            'map_meta_cap'        => true,
 	            'publicly_queryable'  => true,
 	            'exclude_from_search' => true,
-	            'show_in_menu'        => current_user_can( 'edit_evouchers' ) ? 'evoucherwp' : true,
+	            'show_in_menu'        => current_user_can( 'edit_evouchers' ) ? 'evoucherwp_menu' : true,
 	            'hierarchical'        => false,
 	            'show_in_nav_menus'   => false,
 	            'rewrite'             => array( 'slug' => untrailingslashit( 'evoucher' ), 'with_front' => false, 'feeds' => true ),
 	            'query_var'           => false,
-	            'supports'            => array( 'title' ),
+	            'supports'            => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
 	            'has_archive'         => false,
-	        )
+	            'menu_icon'			  => null,
+	            'menu_position'		  => 25,
+ 	        )
 	    );
 	}
 }

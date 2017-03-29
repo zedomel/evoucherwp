@@ -90,62 +90,19 @@ class EVWP_AJAX {
 	 */
 	public static function add_ajax_events() {
 		// evoucherwp_EVENT => nopriv
-		$ajax_events = array(
-			'select_template'		=> false,
-			'tiny_templace_css'		=> false
-		);
+		$ajax_events = array();
 
-		foreach ( $ajax_events as $ajax_event => $nopriv ) {
-			add_action( 'wp_ajax_evoucherwp_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+		$ajax_events = apply_filters( 'evoucherwp_ajax_events', $ajax_events );
 
-			if ( $nopriv ) {
-				add_action( 'wp_ajax_nopriv_evoucherwp_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+		foreach ( $ajax_events as $ajax_event => $prop ) {
+			add_action( 'wp_ajax_evoucherwp_' . $ajax_event, array( $prop[ 'class' ], $ajax_event ) );
+			
+			if ( $prop[ 'nopriv' ] ) {
+				add_action( 'wp_ajax_nopriv_evoucherwp_' . $ajax_event, array( $prop[ 'class' ], $ajax_event ) );
 
 				// AJAX can be used for frontend ajax requests
-				add_action( 'evwp_ajax_' . $ajax_event, array( __CLASS__, $ajax_event ) );
+				add_action( 'evwp_ajax_' . $ajax_event, array( $prop[ 'class' ], $ajax_event ) );
 			}
 		}
 	}
-
-	public static function select_template(){
-
-	    $id = $_POST['template_id'];
-
-	    if ( !empty( $id ) ){
-	        
-	        $template = new EVWP_Voucher_Template( $id );
-	        if ( !$template->exists() ){
-	        	$data = array( 'valid' => false, 'message' => "Can't load template" );
-	        }
-	        else{
-	        	$fields = $template->get_fields();
-	            $data = array( 'valid' => true, 'fields' => $fields, 'id' => $template->id, 'name' => $template->get_title() ) ;
-	        }
-
-	        wp_send_json( $data );
-	    }
-	    
-	    die();
-	}
-
-	public static function tiny_templace_css(){
-		/* Check nonce for security */
-	    $nonce = isset( $_REQUEST['_nonce'] ) ? $_REQUEST['_nonce'] : '';
-	    if( ! wp_verify_nonce( $nonce, 'evoucherwp_tiny_template_css' ) ){
-	        die();
-	    }
-
-
-	    if ( isset( $_REQUEST[ 'post_id' ] ) ){
-			$post_id = $_REQUEST[ 'post_id' ];
-			$css = get_post_meta( $post_id, '_template_css', true );
-			if ( $css ){
-				header( 'Content-type: text/css' );
-				echo $css;
-			}
-	    }
-	    die();
-	}
 }
-
-EVWP_AJAX::init();

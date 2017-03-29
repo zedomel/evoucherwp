@@ -1,19 +1,17 @@
-=== VoucherPress ===
-Contributors: mrwiblog, Christian Serron (http://twitter.com/cserron)
+=== EVoucherWP ===
+Contributors: Jose A. Salim
 Donate link: http://www.stillbreathing.co.uk/donate/
 License: GPLv2 or later
-Tags: buddypress, voucher, vouchers, pdf, print, download, offer, code, special, coupon, ticket, token, 
+Tags: voucher, vouchers, e-voucher, download, print, offer, special
 Requires at least: 2.8
-Tested up to: 4.4.2
+Tested up to: 4.6.4
 Stable tag: 1.5.7
 
-VoucherPress is a Wordpress plugin that allows you to give downloadable, printable vouchers/coupons in PDF format away on your site.
+EVoucherWP is a Wordpress plugin that allows you to give downloadable and printable e-vouchers by providing a custom post type 'evoucher'.
 
 == Description ==
 
-**Thanks for using VoucherPress. It's great to see so many people creating vouchers for all kinds of business. From pizza joints to jewellers, cleaning companies to sports clubs - you've created thousands of vouchers, and I'm really proud to have created something which has been useful to so many people.**
-
-**As I work on the next version of VoucherPress it would be really helpful if you could [fill in this short survey](http://www.stillbreathing.co.uk/projects/voucherpress-the-next-chapter). Many thanks for your time.**
+**Thanks for using EVoucherWP. It's great to see so many people creating vouchers for all kinds of business. From pizza joints to jewellers, cleaning companies to sports clubs - you've created thousands of vouchers, and I'm really proud to have created something which has been useful to so many people.**
 
 Have you ever wanted to give away vouchers, tickets, coupons or tokens on your website? If so this plugin is for you. You can create a voucher with whatever text you want, choosing the layout and font from a range of templates (you can also add your own templates). Vouchers can then be viewed, downloaded and printed from a specified URL.
 

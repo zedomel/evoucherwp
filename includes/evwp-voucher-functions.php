@@ -14,107 +14,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
-//TODO: doc-me
-function render_voucher( $voucher_id ){
-    require_once( 'externals/simple_html_dom.php' );
-
-    $voucher = new EVWP_Voucher( $voucher_id );
-
-    if ( isset( $voucher ) ){
-        $template_id = $voucher->get_template();
-        if ( ! empty( $template_id ) ){
-            $template = new EVWP_Voucher_Template( $template_id );
-            if ( ! empty( $template ) ){
-                $fields = $voucher->get_fields();
-                $html = str_get_html( $template->get_post_data()->post_content );
-                $elems = $html->find('span[id^=_field_], img[id^=_field_]');
-                foreach ( $elems as $elem ) {
-                    $id = $elem->id;
-                    switch ( $elem->getAttribute( 'data-type' ) ) {
-                        case 'text':
-                            if ( isset( $fields->$id ) ){
-                                $html->find( '#' . $id, 0 )->innertext = esc_html( $fields->$id );
-                            }
-                            break;
-                        case 'img':
-                            if ( isset( $fields->$id ) ){
-                                $img_src = wp_get_attachment_url( $fields->$id );
-                                $html->find( '#' . $id, 0 )->src = esc_url( $img_src );
-                            }
-                            break;
-                        case 'guid':
-                            $prefix = $voucher->codeprefix;
-                            $suffix = $voucher->codesuffix;
-                            foreach ( $html->find( '#' . $id ) as $elem ) {
-                                $elem->innertext = esc_html( $prefix . $voucher->guid . $suffix );
-                            }
-                            break;
-                        case 'date':
-                            $df = $elem->getAttribute( 'data-df' );    
-                            $date = 0;
-                            if ( $id == '_field_startdate' ){
-                                $date = $voucher->startdate;
-                            }
-                            elseif ( $id == '_field_expirydate' ){
-                                $date = $voucher->expiry;
-                            }
-
-                            if ( $date > 0 ){
-                                foreach ( $html->find( '#' . $id ) as $elem ) {
-                                    $elem->innertext = date_i18n( $df, $date );
-                                }
-                            }
-                            else{
-                                foreach( $html->find( '#' . $id ) as $elem) {
-                                    $elem->innertext = '';   
-                                }
-                            }
-                            break;
-                    }
-                }
-
-                $str_html = $html->save();
-                $css = get_post_meta( $template->id, '_template_css', true );
-                $css .= '.button{ color: #fff;
-                        background-color: #337ab7;
-                        border-color: #2e6da4;
-                        display: inline-block;
-                        padding: 6px 12px;
-                        margin-bottom: 0;
-                        font-size: 14px;
-                        font-weight: 400;
-                        line-height: 1.42857143;
-                        text-align: center;
-                        white-space: nowrap;
-                        vertical-align: middle;
-                        border: 1px solid transparent;
-                        border-radius: 4px;';
-                echo '<html><head><style>' . esc_attr( $css ) . '</style></head><body>' . $str_html . '</body></html>';
-                $html->clear();
-
-                echo '<a  class="button" href="javascript:window.print()">' . __('Print E-Voucher', 'evoucherwp' ) . '</a>';
-            }
-        }
+/**
+ * Display a EVoucherWP help tip.
+ *
+ * @since  1.0.0
+ *
+ * @param  string $tip        Help tip text
+ * @param  bool   $allow_html Allow sanitized HTML if true or escape
+ * @return string
+ */
+function evwp_help_tip( $tip, $allow_html = false ) {
+    if ( $allow_html ) {
+        $tip = evwp_sanitize_tooltip( $tip );
+    } else {
+        $tip = esc_attr( $tip );
     }
+
+    return '<span class="evoucherwp-help-tip" data-tip="' . $tip . '"></span>';
 }
-add_action( 'evoucherwp_create_voucher_html', 'render_voucher', 10 );
 
-
-
-// check a code address is valid for a voucher
-function voucher_is_valid( $voucher_id, $voucher_guid, $security_code ) {
-    
-    if ( empty( $voucher_id) || empty( $voucher_guid ) || empty( $security_code ) ){
-        return false;
-    }
-    
-    global $wpdb;
-    $prefix = $wpdb->prefix;
-    $voucher = new EVWP_Voucher( $voucher_id );
-    if ( $voucher->guid === $voucher_guid && $voucher->security_code === $security_code ){
-    	return $voucher->is_valid();
-    }
-    return "unavailable";
+/**
+ * Sanitize a string destined to be a tooltip.
+ *
+ * @param string $var
+ * @return string
+ */
+function evwp_sanitize_tooltip( $var ) {
+    return htmlspecialchars( wp_kses( html_entity_decode( $var ), array(
+        'br'     => array(),
+        'em'     => array(),
+        'strong' => array(),
+        'small'  => array(),
+        'span'   => array(),
+        'ul'     => array(),
+        'li'     => array(),
+        'ol'     => array(),
+        'p'      => array(),
+    ) ) );
 }
 
 // check if the site is using pretty URLs
@@ -124,6 +60,54 @@ function evwp_pretty_urls() {
         return true;
     }
     return false;
+}
+
+
+function evwp_generate_voucher_code( $post_id ){
+
+    $code_type = get_post_meta( $post_id, '_evoucherwp_codestype', true );
+
+    if ( $code_type === 'single' ){
+        $custom_code = get_post_meta( $post_id, '_evoucherwp_singlecode', true );
+        if ( !empty( $custom_code ) ){
+            $code = sanitize_text_field( $custom_code );
+        }
+        else{
+            $code = evwp_generate_guid( 6 );
+        }
+    }
+    else{
+        $length = get_post_meta( $post_id, '_evoucherwp_codelength', true );
+        // Fix length if empty or <= 0
+        if ( empty( $length ) || $length <= 0)
+            $length = 6;
+        else
+            $length = intval( $length );
+
+        if ( $code_type == 'sequential' ){
+            $code = evwp_generate_sequence_code( $post_id, $length );
+        }
+        else {
+            $code = evwp_generate_guid( $length );
+        }
+    }
+
+    return $code;
+}
+
+function evwp_generate_sequence_code( $post_id, $length ){
+    global $wpdb;
+
+    if ( $wpdb->insert( $wpdb->prefix . 'evoucherwp_code_seq', array( 'post_id' => $post_id ), array( '%d' ) ) ){
+        $code = $wpdb->insert_id;
+        return str_pad( $code, $length, '0', STR_PAD_LEFT );
+    }
+    return false;
+}
+
+function evwp_delete_sequence_code( $post_id ){
+    global $wpdb;
+    return $wpdb->delete( $wpdb->prefix . 'evoucherwp_code_seq', array( 'post_id' => $post_id ), array( '$d' ) );
 }
 
 // create an md5 hash of a guid

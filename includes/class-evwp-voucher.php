@@ -36,10 +36,14 @@ class EVWP_Voucher {
 	 *
 	 * @param mixed $voucher
 	 */
-	public function __construct( $voucher ) {
+	public function __construct( $voucher = 0 ) {
+		$this->init( $voucher );
+	}
+
+	protected function init( $voucher = 0){
 		if ( is_numeric( $voucher ) ) {
 			$this->id   = absint( $voucher );
-			$this->post = get_post( $this->id );
+			$this->post = get_post( $voucher );
 		} elseif ( $voucher instanceof EVWP_Voucher ) {
 			$this->id   = absint( $voucher->id );
 			$this->post = $voucher->post;
@@ -56,7 +60,7 @@ class EVWP_Voucher {
 	 * @return bool
 	 */
 	public function __isset( $key ) {
-		return metadata_exists( 'post', $this->id, '_' . $key );
+		return metadata_exists( 'post', $this->id, '_evoucherwp_' . $key );
 	}
 
 	/**
@@ -66,18 +70,14 @@ class EVWP_Voucher {
 	 * @return mixed
 	 */
 	public function __get( $key ) {
-		$value = get_post_meta( $this->id, '_' . $key, true );
+		$value = get_post_meta( $this->id, '_evoucherwp_' . $key, true );
 
 		// Get values or default if not set
-		if ( in_array( $key, array( 'guid', 'evoucherwp_template', 'security_code', 'codestype', 'codeprefix', 'codesuffix', 'singlecode' ) ) ) {
+		if ( in_array( $key, array( 'guid', 'codestype', 'codeprefix', 'codesuffix', 
+			'singlecode', 'header_image', 'header_title' ) ) ) {
 			$value = $value ? $value : '';
-
-		} elseif ( in_array( $key, array( 'fields' ) ) ) {
-			$value = $value ? $value : array();
 		} elseif ( in_array( $key , array( 'expiry', 'startdate', 'codelength' ) ) ){
 			$value = $value ? intval( $value ) : 0;
-		} elseif ( in_array( $key, array( 'live', 'requireemail' ) ) ){
-			$value = ( $value && $value === 'yes' ) ? true : false;
 		}
 
 		if ( false !== $value ) {
@@ -126,16 +126,7 @@ class EVWP_Voucher {
 	}
 
 	/**
-	 * Get the template id of the voucher.
-	 *
-	 * @return int template voucher (post) ID.
-	 */
-	public function get_template() {
-		return intval( $this->evoucherwp_template );
-	}
-
-	/**
-	 * Returns whether or not the product post exists.
+	 * Returns whether or not the voucher post exists.
 	 *
 	 * @return bool
 	 */
@@ -143,13 +134,8 @@ class EVWP_Voucher {
 		return empty( $this->post ) ? false : true;
 	}
 
-	public function get_fields(){
-		return (object) maybe_unserialize( $this->fields );
-	}
-
-
 	public function is_valid(){
-		if ( empty( $this->guid ) || empty( $this->security_code ) ){
+		if ( empty( $this->guid ) ){
 	        return false;
 	    }
         // if there is an expiry and the expiry is in the past
@@ -162,24 +148,24 @@ class EVWP_Voucher {
         }
 
         // if emails are not required
-
-        if ( $this->requireemail === false ) {
-            return  $this->live === true ? 'valid' : 'unavailable' ;
+        if ( $this->requireemail === 'no' ) {
+            return  $this->live === 'yes' ? 'valid' : 'unavailable' ;
         } 
-        elseif ( $this->live === true ) {
+        elseif ( $this->live === 'yes' ) {
             return 'unregistered';
         }
         return 'unavailable';
 	}
 
-	public function get_download_url( $encode = true ){
-		$append = $encode ? '&amp;' : '&';
-		$security_code = '';
-    	if ( "" != $this->security_code ) {
-    		$security_code = $append . "sc=" . urlencode( $this->security_code );
-	    }
+	public function can_change(){
+		$elapsed_days = intval( ( time() - $this->startdate ) / 60 / 60 / 24 );
+		$max_days_to_change = intval( get_option( '_evoucherwp_days_to_change', 0 ) );
+		return ( $this->live && time() <= $this->expiry && $elapsed_days <= $max_days_to_change );
+	}
+
+	public function get_download_url(){
     	if ( !empty( $this->guid ) ) {
-		    return get_permalink() . "/?evoucher=" . $this->guid . $security_code;   
+		    return get_permalink() . "/?evoucher=" . $this->guid;
 		}
 		return false;
 	}

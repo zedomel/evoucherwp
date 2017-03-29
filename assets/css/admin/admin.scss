@@ -1,0 +1,265 @@
+/**
+ * admin.scss
+ * General EVoucherWP admin styles.
+ */
+
+/**
+ * Imports
+ */
+
+@import "variables";
+@import "mixins";
+
+.form-field {
+	display: inline-table;
+	width: 48%;
+	padding: 0;
+	margin: 9px 0 0 0;
+
+	label {
+		display: block;
+		padding: 0 0 3px;
+	}
+
+	input,
+	textarea {
+		width: 95%;
+	}
+
+	input.checkbox{
+		width: auto;
+	}
+
+	select {
+		width: 95%;
+	}
+
+	small {
+		display: block;
+		margin: 5px 0 0 0;
+		color: #fff;
+	}
+}
+
+.image-preview-wrapper p,
+.image-preview-wrapper div {
+	display: inline-block;	
+}
+
+.image-preview-wrapper .upload-image-button{
+	vertical-align: baseline;
+}
+
+.image-preview{
+	width: 350px;
+	height: auto;
+}
+
+.evoucherwp-url{
+
+	a {
+		float: right;
+	}
+}
+
+.hide {
+	display: none;
+}
+
+.evoucherwp {
+	
+	.subsubsub {
+		margin: -8px 0 0;
+	}
+
+	textarea[disabled="disabled"] {
+		background: #DFDFDF !important;
+	}
+
+	table.form-table {
+		margin: 0;
+		position: relative;
+
+		.select2-container {
+			display: block;
+			max-width: 350px;
+		}
+
+		.forminp-radio ul {
+			margin: 0;
+			li {
+				line-height: 1.4em;
+			}
+		}
+
+		textarea.input-text {
+			height: 100%;
+			min-width: 150px;
+			display: block;
+		}
+
+		input.regular-input {
+			width: 25em;
+		}
+
+		textarea.wide-input {
+			width: 100%;
+		}
+
+		img.help_tip,
+		.evoucherwp-help-tip {
+			padding: 0;
+			margin: -4px 0 0 5px;
+			vertical-align: middle;
+			cursor: help;
+			line-height: 1;
+		}
+
+		span.help_tip {
+			cursor: help;
+			color: $blue;
+		}
+
+		th {
+			position: relative;
+			padding-right: 24px;
+		}
+
+		.select2-container {
+			vertical-align: top;
+			margin-bottom: 3px;
+		}
+
+		table.widefat th {
+			padding-right: inherit;
+		}
+
+		th img.help_tip,
+		th .evoucherwp-help-tip {
+			margin: 0 -24px 0 0;
+			float: right;
+		}
+
+		.wp-list-table .evoucherwp-help-tip {
+			float: none;
+		}
+
+		fieldset {
+			margin-top: 4px;
+
+			img.help_tip,
+			.evoucherwp-help-tip {
+				margin: -3px 0 0 5px;
+			}
+
+			p.description {
+				margin-bottom: 8px;
+			}
+
+			&:first-child {
+				margin-top: 0;
+			}
+		}
+	}
+}
+
+/**
+ * Help Tip
+ */
+.evoucherwp-help-tip {
+	color: #666;
+	display: inline-block;
+	font-size: 1.1em;
+	font-style: normal;
+	height: 16px;
+	line-height: 16px;
+	position: relative;
+	vertical-align: middle;
+	width: 16px;
+
+	&:after {
+		@include icon_dashicons( "\f223" );
+		cursor: help;
+	}
+}
+
+h2 .evoucherwp-help-tip {
+	margin-top: -5px;
+	margin-left: .25em;
+}
+
+#tiptip_holder {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 9999999;
+}
+
+#tiptip_holder {
+	&.tip_top {
+		padding-bottom: 5px;
+
+		#tiptip_arrow_inner {
+			margin-top: -7px;
+			margin-left: -6px;
+			border-top-color: #333;
+		}
+	}
+
+	&.tip_bottom {
+		padding-top: 5px;
+
+		#tiptip_arrow_inner {
+			margin-top: -5px;
+			margin-left: -6px;
+			border-bottom-color: #333;
+		}
+	}
+
+	&.tip_right {
+		padding-left: 5px;
+
+		#tiptip_arrow_inner {
+			margin-top: -6px;
+			margin-left: -5px;
+			border-right-color: #333;
+		}
+	}
+
+	&.tip_left {
+		padding-right: 5px;
+
+		#tiptip_arrow_inner {
+			margin-top: -6px;
+			margin-left: -7px;
+			border-left-color: #333;
+		}
+	}
+}
+
+#tiptip_content {
+	color: #fff;
+	font-size: .8em;
+	max-width: 150px;
+	background: #333;
+	text-align: center;
+	border-radius: 3px;
+	padding: .618em 1em;
+	box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+
+	code {
+		padding: 1px;
+		background: #888;
+	}
+}
+
+#tiptip_arrow,
+#tiptip_arrow_inner {
+	position: absolute;
+	border-color: transparent;
+	border-style: solid;
+	border-width: 6px;
+	height: 0;
+	width: 0;
+}

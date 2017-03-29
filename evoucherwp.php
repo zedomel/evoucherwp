@@ -84,6 +84,11 @@ final class EVoucherWP {
 		$this->init_hooks();
 
 		do_action( 'evoucherwp_loaded' );
+
+		/*
+		 * Initialize AJAX calls
+		 */
+		EVWP_AJAX::init();
 	}
 
 	/**
@@ -91,15 +96,15 @@ final class EVoucherWP {
 	 * @since  1.0
 	 */
 	private function init_hooks() {
-		register_activation_hook( __FILE__, array( 'EVoucherWP_Install', 'install' ) );
+		register_activation_hook( __FILE__, array( 'EVWP_Install', 'install' ) );
+        add_action( 'after_setup_theme', array( $this, 'include_template_functions' ), 11 );
+        add_action( 'init', array( $this, 'init' ), 0 );
 	}
 
 	/**
-	 * Define WC Constants.
+	 * Define EVoucherWP Constants.
 	 */
 	private function define_constants() {
-		$upload_dir = wp_upload_dir();
-
 		$this->define( 'EVWP_PLUGIN_FILE', __FILE__ );
 		$this->define( 'EVWP_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 		$this->define( 'EVWP_VERSION', $this->version );
@@ -144,7 +149,9 @@ final class EVoucherWP {
 
 		include_once( 'includes/class-evwp-post-types.php' ); // Registers post types
 		include_once( 'includes/class-evwp-voucher.php' ); // Vouchers
-		include_once( 'includes/class-evwp-voucher-template.php' ); // Vouchers Templates
+
+		// //TODO: check if evoucherwp-woocommerce.php exists
+		// in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins'))) ? include_once 'addons/woocommerce/evoucherwp-woocommerce.php':'';
 	}
 
 	/**
@@ -163,7 +170,15 @@ final class EVoucherWP {
 	 * Include required frontend files.
 	 */
 	public function frontend_includes() {
-		include_once( 'includes/class-evwp-template-loader.php' );                // Template Loader
+		// Template Loader
+		include_once( 'includes/class-evwp-template-loader.php' ); 
+		include_once( 'includes/class-evwp-frontend-assets.php' ); 
+		include_once( 'includes/evwp-template-hooks.php' );
+
+	}
+
+	public function include_template_functions(){
+		include_once( 'includes/evwp-template-functions.php' );
 	}
 
 	/**

@@ -14,9 +14,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * EVoucherWP_Install Class.
+ * EVWP_Install Class.
  */
-class EVoucherWP_Install {
+class EVWP_Install {
 
 	/** @var array DB updates and callbacks that need to be run per version */
 	private static $db_updates = array();
@@ -51,6 +51,7 @@ class EVoucherWP_Install {
 			define( 'EVWP_INSTALLING', true );
 		}
 
+		self::create_options();	
 		self::create_tables();
 		self::create_roles();
 
@@ -63,11 +64,11 @@ class EVoucherWP_Install {
 
 		// No versions? This is a new install :)
 		if ( is_null( $current_evwp_version ) && is_null( $current_db_version ) ) {
-			set_transient( '_evwp_activation_redirect', 1, 30 );
+			set_transient( '_evoucherwp_activation_redirect', 1, 30 );
 		}
 		
 		self::update_db_version();
-		self::update_evwp_version();
+		self::update_evoucherwp_version();
 
 		// Flush rules after install
 		flush_rewrite_rules();
@@ -76,7 +77,7 @@ class EVoucherWP_Install {
 	/**
 	 * Update EVWP version to current.
 	 */
-	private static function update_evwp_version() {
+	private static function update_evoucherwp_version() {
 		delete_option( 'evoucherwp_version' );
 		add_option( 'evoucherwp_version', EVoucherWP()->version );
 	}
@@ -90,6 +91,35 @@ class EVoucherWP_Install {
 		add_option( 'evoucherwp_db_version', is_null( $version ) ? EVoucherWP()->version : $version );
 	}
 
+
+	/**
+	 * Default options.
+	 *
+	 * Sets up the default options used on the settings page.
+	 */
+	private static function create_options() {
+		// Include settings so that we can run through defaults
+		include_once( 'admin/class-evwp-admin-settings.php' );
+
+		$settings = EVWP_Admin_Settings::get_settings_pages();
+
+		foreach ( $settings as $section ) {
+			if ( ! method_exists( $section, 'get_settings' ) ) {
+				continue;
+			}
+			$subsections = array_unique( array_merge( array( '' ), array_keys( $section->get_sections() ) ) );
+
+			foreach ( $subsections as $subsection ) {
+				foreach ( $section->get_settings( $subsection ) as $value ) {
+					if ( isset( $value['default'] ) && isset( $value['id'] ) ) {
+						$autoload = isset( $value['autoload'] ) ? (bool) $value['autoload'] : true;
+						add_option( $value['id'], $value['default'], '', ( $autoload ? 'yes' : 'no' ) );
+					}
+				}
+			}
+		}
+	}
+
 	/**
 	 * Set up the database tables which the plugin needs to function.
 	 *
@@ -97,6 +127,7 @@ class EVoucherWP_Install {
 	 *		evoucherwp_templates - Table for storing voucher templates - there are user defined.
 	 *		evoucher_vouchers - Table for storgin vouchers.
 	 *		evoucher_downlaods - Table for storing user and guest downloads.
+	 * TODO: remove it
 	 */
 	private static function create_tables() {
 		global $wpdb;
@@ -116,6 +147,7 @@ class EVoucherWP_Install {
 	/**
 	 * Get Table schema.
 	 * TODO: https://github.com/woothemes/woocommerce/wiki/Database-Description/
+	 * TODO: remove it? Is it necessary?
 	 * @return string
 	 */
 	private static function get_schema() {
@@ -128,18 +160,14 @@ class EVoucherWP_Install {
 		}
 
 		// table to store the vouchers
-		$tables = "    
-CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
-  id mediumint(9) NOT NULL AUTO_INCREMENT,
-  voucher_id mediumint(9) NOT NULL,
-  time bigint(11) DEFAULT '0' NOT NULL,
-  ip VARCHAR(15) NOT NULL,
-  name VARCHAR(55) NULL,
-  email varchar(255) NULL,
-  guid varchar(36) NOT NULL,
-  PRIMARY KEY  id (id)
+		$tables = "
+CREATE TABLE {$wpdb->prefix}evoucherwp_code_seq (
+	code bigint(20) NOT NULL AUTO_INCREMENT,
+	post_id bigint(20) NOT NULL,
+	UNIQUE KEY post_id ( post_id ),
+	PRIMARY KEY (code)
 ) $collate;
-	";
+		";
 
 		return $tables;
 	}
@@ -220,7 +248,7 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
 	 private static function get_core_capabilities() {
 		$capabilities = array();
 
-	    $capability_types = array( 'evoucher', 'evoucher_template');
+	    $capability_types = array( 'evoucher' );
 
 	    foreach ( $capability_types as $capability_type ) {
 
@@ -327,7 +355,9 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
 	 */
 	public static function wpmu_drop_tables( $tables ) {
 		global $wpdb;
-		$tables[] = $wpdb->prefix . 'evoucherwp_downloads';
+
+		$tables[] = $wpdb->prefix . 'evoucherwp_code_seq';
+
 		return $tables;
 	}
 
@@ -343,4 +373,4 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_downloads (
 	}
 }
 
-EVoucherWP_Install::init();
+EVWP_Install::init();

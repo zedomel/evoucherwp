@@ -3,7 +3,7 @@
  * EVoucherWP Meta Boxes
  * This file was adapted from https://github.com/woocommerce/woocommerce/blob/master/includes/admin/class-wc-admin-meta-boxes.php
  *
- * Sets up the write panels used by products and orders (custom post types).
+ * Sets up the write panels used by evoucher (custom post types).
  *
  * @author      Jose A. Salim
  * @category    Admin
@@ -44,9 +44,7 @@ class EVWP_Admin_Meta_Boxes {
 
 		// Save E-Voucher Meta Boxes
 		add_action( 'evoucherwp_process_evoucher_meta', 'EVWP_Meta_Box_Voucher_Options::save', 10, 2 );
-		add_action( 'evoucherwp_process_evoucher_meta', 'EVWP_Meta_Box_Voucher_Fields::save', 20, 2 );
-		add_action( 'evoucherwp_process_evoucher_template_meta', 'EVWP_Meta_Box_Voucher_Template_CSS::save', 10, 2 );
-		
+		add_action( 'evoucherwp_process_evoucher_meta', 'EVWP_Meta_Box_Voucher_Header_Footer::save', 20, 2 );
 
 		// Error handling (for showing errors from meta boxes on next page load)
 		add_action( 'admin_notices', array( $this, 'output_errors' ) );
@@ -93,19 +91,16 @@ class EVWP_Admin_Meta_Boxes {
 	 * Add EVoucherWP Meta boxes.
 	 */
 	public function add_meta_boxes() {
-	    add_meta_box( 'voucher_fields', __( 'E-voucher Fields', 'evoucherwp' ), 'EVWP_Meta_Box_Voucher_Fields::output', 'evoucher', 'normal', 'high' );
 	    add_meta_box( 'voucher_options', __( 'E-voucher Options', 'evoucherwp' ), 'EVWP_Meta_Box_Voucher_Options::output', 'evoucher', 'normal' );
-
-	    add_meta_box( 'voucher_template_css', __( 'Custom CSS', 'evoucherwp' ), 'EVWP_Meta_Box_Voucher_Template_CSS::output', 'evoucher_template', 'normal' );
+	    add_meta_box( 'voucher_header', __( 'Header and Footer', 'evoucherwp' ), 'EVWP_Meta_Box_Voucher_Header_Footer::output', 'evoucher', 'normal' );
 	}
 
 	/**
 	 * Remove bloat.
 	 */
 	public function remove_meta_boxes() {
-		remove_meta_box( 'voucher_options', 'evoucher', 'normal' );
-		remove_meta_box( 'voucher_fields', 'evoucherwp', 'normal' );
-		remove_meta_box( 'voucher_template_css', 'evoucherwp', 'normal' );
+		remove_meta_box( 'voucher_options', 'evoucherwp', 'normal' );
+		remove_meta_box( 'voucher_header', 'evoucherwp', 'normal' );
 	}
 
 	/**
@@ -147,7 +142,7 @@ class EVWP_Admin_Meta_Boxes {
 		self::$saved_meta_boxes = true;
 
 		// Check the post type
-		if ( in_array( $post->post_type, array( 'evoucher', 'evoucher_template' ) ) ) {
+		if ( in_array( $post->post_type, array( 'evoucher' ) ) ) {
 			do_action( 'evoucherwp_process_' . str_replace('-', '_', $post->post_type ) . '_meta', $post_id, $post );	
 		}
 	}

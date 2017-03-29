@@ -33,25 +33,25 @@ class EVWP_Meta_Box_Voucher_Options {
 	public static function init_options_fields() {
 
 		self::$options = apply_filters( 'evoucherwp_admin_options_fields', array(
-			'_requireemail' => array(
+			'_evoucherwp_requireemail' => array(
 				'label' => __( 'Require email address', 'evoucherwp' ),
 				'show'  => false,
 				'type'  => 'checkbox'
 			),
-			'_live' => array(
+			'_evoucherwp_live' => array(
 				'label' => __( 'E-voucher is available', 'evoucherwp' ),
 				'show'  => false,
 				'type'  => 'checkbox'
 			),
-			'_codeprefix' => array(
+			'_evoucherwp_codeprefix' => array(
 				'label' => __( 'Voucher code prefix:', 'evoucherwp' ),
 				'show'  => false
 			),
-			'_codesuffix' => array(
+			'_evoucherwp_codesuffix' => array(
 				'label' => __( 'Vocher code suffix:', 'evoucherwp' ),
 				'show'  => false
 			),
-			'_codestype' => array(
+			'_evoucherwp_codestype' => array(
 				'label'   => __( 'Codes type:', 'evoucherwp' ),
 				'show'    => false,
 				'class'   => 'select short',
@@ -63,13 +63,13 @@ class EVWP_Meta_Box_Voucher_Options {
 					'single' => __( 'Single code', 'evoucherwp' )
 					)  
 			),
-			'_singlecode' => array(
+			'_evoucherwp_singlecode' => array(
 				'label' => __( 'Single code:', 'evoucherwp' ),
 				'class'   => 'short',
 				'wrapper_class' => 'hide',
 				'show'  => false
 			),
-			'_codelength' => array(
+			'_evoucherwp_codelength' => array(
 				'label' => __( 'Code length:', 'evoucherwp' ),
 				'show' => false,
 				'type' => 'select',
@@ -80,6 +80,31 @@ class EVWP_Meta_Box_Voucher_Options {
 					'9' => __( '9', 'evoucherwp'),
 					'10' => __( '10', 'evoucherwp'),
 				)
+			),
+			'_evoucherwp_startdate' => array(
+				'label'			=> __( 'Date e-voucher starts being available:', 'evoucherwp' ),
+				'show'			=> false,
+				'type'			=> 'text',
+				'class'			=> 'short',
+				'placeholder'	=> _x( 'Start&hellip;', 'placeholder', 'evoucherwp' ) . 'YYYY-MM-DD',
+				'maxlength'		=> 10,
+				'pattern'			=> '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])'
+			),
+			'_evoucherwp_expiry' => array(
+				'label'			=> __( 'Date e-voucher expires:', 'evoucherwp' ),
+				'show'			=> false,
+				'type'			=> 'text',
+				'class'			=> 'short',
+				'placeholder'	=> _x( 'Expires&hellip;', 'placeholder', 'evoucherwp' ) . '  YYYY-MM-DD',
+				'maxlength'		=> 10,
+				'pattern'			=> '[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])'
+			),
+			'_evoucherwp_expiry_days' => array(
+				'label'			=> __( 'Number of days before voucher expires:', 'evoucherwp' ),
+				'show'			=> false,
+				'type'			=> 'text',
+				'class'			=> 'short',
+				'placeholder'	=> _x( 'Days&hellip;', 'placeholder', 'evoucherwp' )
 			)
 		) );
 	}
@@ -94,8 +119,6 @@ class EVWP_Meta_Box_Voucher_Options {
 		self::init_options_fields();
 
 		wp_nonce_field( 'evoucherwp_save_data', 'evoucherwp_meta_nonce' );
-
-		$voucher = get_post_meta( $post->ID );
 		
        	echo '<div class="panel-wrap">';
 
@@ -114,27 +137,13 @@ class EVWP_Meta_Box_Voucher_Options {
 					evoucherwp_wp_checkbox( $field );
 				break;
 				default :
+					if ( in_array( $field[ 'id' ], array( '_evoucherwp_startdate', '_evoucherwp_expiry' )  ) ){
+						$field[ 'value' ] = ( $date = get_post_meta( $post->ID, $field[ 'id' ], true ) ) ? date_i18n( 'Y-m-d', $date ) : '';
+					}
 					evoucherwp_wp_text_input( $field );
 				break;
 			}
 		}
-
-		$startdate = ( $date = get_post_meta( $post->ID, '_startdate', true ) ) ? date_i18n( 'Y-m-d', $date ) : '';
-		$expiry   = ( $date = get_post_meta( $post->ID, '_expiry', true ) ) ? date_i18n( 'Y-m-d', $date ) : '';
-
-		echo '<p class="form-field">
-			<label for="_startdate">' . __( 'Date e-voucher starts being available:', 'evoucherwp' ) . '</label>
-			<input type="text" class="short" name="_startdate" id="_startdate" value="' . esc_attr( $startdate ) . '" placeholder="' . _x( 'Start&hellip;', 'placeholder', 'evoucherwp' ) . ' YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
-			</p>
-			<p class="form-field">
-			<label for="_expiry">' . __( 'Date e-voucher expires:', 'evoucherwp' ) . '</label>
-			<input type="text" class="short" name="_expiry" id="_expiry" value="' . esc_attr( $expiry ) . '" placeholder="' . _x( 'Expires&hellip;', 'placeholder', 'evoucherwp' ) . '  YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
-			</p>
-			<p class="form-field">
-			<label for="_expirydays">' . __( 'Number of days before voucher expires:', 'evoucherwp' ) . '</label>
-			<input type="text" class="short" name="_expirydays" id="_expirydays" value="" placeholder="' . _x( 'Days&hellip;', 'placeholder', 'evoucherwp' ) . ' YYYY-MM-DD" maxlength="10" pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" />
-		</p>';
-
 
 		echo '</div>';
 	}
@@ -146,49 +155,63 @@ class EVWP_Meta_Box_Voucher_Options {
 	 * @param WP_Post $post
 	 */
 	public static function save( $post_id, $post ) {
-		global $wpdb;
+		global $wpdb;		
 
 		self::init_options_fields();
+
+		$code_type = get_post_meta( $post_id, '_evoucherwp_codestype', true );
+		$code_length = get_post_meta( $post_id, '_evoucherwp_codelength', true );
+
+		// If any change in code type or length, 
+		// delete GUID to calculates it again
+		$change_code_type = $code_type !== sanitize_text_field( $_POST[ '_evoucherwp_codestype' ] );
+		$change_code_length = $code_length !== sanitize_text_field( $_POST[ '_evoucherwp_codelength' ] );
+		if ( $change_code_type || $change_code_length ){
+			update_post_meta( $post_id, '_evoucherwp_guid', '' );
+			// If code type was 'sequential' we must delete it from respective table
+			evwp_delete_sequence_code( $post_id );
+		}
 
 		if ( ! empty( self::$options ) ) {
 			foreach ( self::$options as $key => $field ) {
 				if ( ! isset( $field['id'] ) ){
 					$field['id'] = $key;
 				}
-				if ( isset( $_POST[ $field['id'] ] ) ){
-					update_post_meta( $post_id, $field['id'], evwp_clean( $_POST[ $field['id'] ] ) );	
+				if ( isset( $_POST[ $field[ 'id' ] ] ) ){
+					if ( ! in_array( $field[ 'id' ], array( '_evoucherwp_startdate', '_evoucherwp_expiry', '_evoucherwp_expiry_days' )  ) ){
+						update_post_meta( $post_id, $field['id'], evwp_clean( $_POST[ $field['id'] ] ) );	
+					}
 				}
-				elseif ( in_array( $field['id'], array( '_live', '_requireemail' ) ) ){
+				elseif ( in_array( $field['id'], array( '_evoucherwp_live', '_evoucherwp_requireemail' ) ) ){
 					update_post_meta( $post_id, $field['id'], 'no');	
 				}
 			}
 		}
 
 		// Update start date
-		if ( empty( $_POST['_startdate'] ) ) {
+		if ( empty( $_POST['_evoucherwp_startdate'] ) ) {
 			$startdate = current_time('timestamp');
 		} else {
-			$startdate = strtotime( $_POST['_startdate'] );
+			$startdate = strtotime( $_POST['_evoucherwp_startdate'] );
 		}
 
 		// $date = date_i18n( 'Y-m-d', $startdate );
-		update_post_meta( $post_id, '_startdate', evwp_clean( $startdate ) );
+		update_post_meta( $post_id, '_evoucherwp_startdate', evwp_clean( $startdate ) );
 
 		// Update expiry date
 		$expiry = 0;
-		if ( !empty( $_POST['_expiry'] ) ) {
-			$expiry = strtotime( $_POST['_expiry'] );
+		if ( !empty( $_POST['_evoucherwp_expiry'] ) ) {
+			$expiry = strtotime( $_POST['_evoucherwp_expiry'] );
 		}
-		elseif ( !empty( $_POST['_expirydays'])  ) {
-			$expiry = $startdate + ( intval( $_POST["_expirydays"] ) * 24 * 60 * 60 );
+		elseif ( !empty( $_POST['_evoucherwp_expiry_days'])  ) {
+			$expiry = $startdate + ( intval( $_POST[ '_evoucherwp_expiry_days' ] ) * 24 * 60 * 60 );
 		}
 
 		if ( $expiry > 0){
 			// $date = date_i18n( 'Y-m-d', $date );
-			update_post_meta( $post_id, '_expiry', evwp_clean( $expiry ) );
+			update_post_meta( $post_id, '_evoucherwp_expiry', evwp_clean( $expiry ) );
 		}
-
-
+		
 		clean_post_cache( $post_id );
 	}
 }

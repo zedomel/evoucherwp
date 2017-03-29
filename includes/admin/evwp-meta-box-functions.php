@@ -45,7 +45,7 @@ function evoucherwp_wp_text_input( $field ) {
 	if ( ! empty( $field['description'] ) ) {
 
 		if ( isset( $field['desc_tip'] ) && false !== $field['desc_tip'] ) {
-			echo wc_help_tip( $field['description'] );
+			echo evwp_help_tip( $field['description'] );
 		} else {
 			echo '<span class="description">' . wp_kses_post( $field['description'] ) . '</span>';
 		}
@@ -98,7 +98,7 @@ function evoucherwp_wp_textarea_input( $field ) {
 	if ( ! empty( $field['description'] ) ) {
 
 		if ( isset( $field['desc_tip'] ) && false !== $field['desc_tip'] ) {
-			echo wc_help_tip( $field['description'] );
+			echo evwp_help_tip( $field['description'] );
 		} else {
 			echo '<span class="description">' . wp_kses_post( $field['description'] ) . '</span>';
 		}
@@ -137,7 +137,7 @@ function evoucherwp_wp_checkbox( $field ) {
 	if ( ! empty( $field['description'] ) ) {
 
 		if ( isset( $field['desc_tip'] ) && false !== $field['desc_tip'] ) {
-			echo wc_help_tip( $field['description'] );
+			echo evwp_help_tip( $field['description'] );
 		} else {
 			echo '<span class="description">' . wp_kses_post( $field['description'] ) . '</span>';
 		}
@@ -182,7 +182,7 @@ function evoucherwp_wp_select( $field ) {
 	if ( ! empty( $field['description'] ) ) {
 
 		if ( isset( $field['desc_tip'] ) && false !== $field['desc_tip'] ) {
-			echo wc_help_tip( $field['description'] );
+			echo evwp_help_tip( $field['description'] );
 		} else {
 			echo '<span class="description">' . wp_kses_post( $field['description'] ) . '</span>';
 		}
@@ -205,7 +205,7 @@ function evoucherwp_wp_radio( $field ) {
 	$field['value']         = isset( $field['value'] ) ? $field['value'] : get_post_meta( $thepostid, $field['id'], true );
 	$field['name']          = isset( $field['name'] ) ? $field['name'] : $field['id'];
 
-	echo '<fieldset class="form-field ' . esc_attr( $field['id'] ) . '_field ' . esc_attr( $field['wrapper_class'] ) . '"><legend>' . wp_kses_post( $field['label'] ) . '</legend><ul class="wc-radios">';
+	echo '<fieldset class="form-field ' . esc_attr( $field['id'] ) . '_field ' . esc_attr( $field['wrapper_class'] ) . '"><legend>' . wp_kses_post( $field['label'] ) . '</legend><ul class="evwp-radios">';
 
 	foreach ( $field['options'] as $key => $value ) {
 
@@ -224,7 +224,7 @@ function evoucherwp_wp_radio( $field ) {
 	if ( ! empty( $field['description'] ) ) {
 
 		if ( isset( $field['desc_tip'] ) && false !== $field['desc_tip'] ) {
-			echo wc_help_tip( $field['description'] );
+			echo evwp_help_tip( $field['description'] );
 		} else {
 			echo '<span class="description">' . wp_kses_post( $field['description'] ) . '</span>';
 		}

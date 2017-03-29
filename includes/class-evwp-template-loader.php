@@ -20,7 +20,7 @@ class EVWP_Template_Loader {
 	 * Hook in methods.
 	 */
 	public static function init() {
-		add_filter( 'template_include', array( __CLASS__, 'template_loader' ) );
+		add_filter( 'template_include', array( __CLASS__, 'template_loader' ), 10 );
 	}
 
 	/**
@@ -55,8 +55,8 @@ class EVWP_Template_Loader {
 
 		if ( $file ) {
 			$template       = locate_template( array_unique( $find ) );
-			if ( ! $template || EVWP_TEMPLATE_DEBUG_MODE ) {
-				$template = EVoucherWP()->plugin_path() . '/templates/' . $file;
+			if ( ! $template ) {
+				$template = apply_filters( 'evoucherwp_template_loader', EVoucherWP()->plugin_path() . '/templates/' . $file, $file );
 			}
 		}
 
