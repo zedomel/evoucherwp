@@ -149,9 +149,6 @@ final class EVoucherWP {
 
 		include_once( 'includes/class-evwp-post-types.php' ); // Registers post types
 		include_once( 'includes/class-evwp-voucher.php' ); // Vouchers
-
-		// //TODO: check if evoucherwp-woocommerce.php exists
-		// in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins'))) ? include_once 'addons/woocommerce/evoucherwp-woocommerce.php':'';
 	}
 
 	/**
