@@ -33,7 +33,7 @@ h1 {
 
 	margin: 0 20% 0 20%;
 	padding-top: 40px;
-	
+
 	& > * {
 		text-align: center;
 	}
@@ -98,13 +98,17 @@ h1 {
 }
 
 .voucher-footer{
-	color: #FFFFFF;
-	font-family: Helvetica;
-	font-size: 12px;
-	line-height: 150%;
-	text-align: center;
+
 	background-color: $base_color;
 	margin-top: 50px;
+		
+	span, p {
+		color: #FFFFFF;
+		font-family: Helvetica;
+		font-size: 12px;
+		line-height: 150%;
+		text-align: center;
+	}
 
 	.footer-content{
 		padding: 18px 0px 18px 0px;

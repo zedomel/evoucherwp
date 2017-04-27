@@ -68,13 +68,14 @@ h1 {
       margin: 10px 50px 0px 50px; }
 
 .voucher-footer {
-  color: #FFFFFF;
-  font-family: Helvetica;
-  font-size: 12px;
-  line-height: 150%;
-  text-align: center;
   background-color: #153b95;
   margin-top: 50px; }
+  .voucher-footer span, .voucher-footer p {
+    color: #FFFFFF;
+    font-family: Helvetica;
+    font-size: 12px;
+    line-height: 150%;
+    text-align: center; }
   .voucher-footer .footer-content {
     padding: 18px 0px 18px 0px;
     font-style: italic; }
