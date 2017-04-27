@@ -234,8 +234,8 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_code_seq (
 
 	    foreach ( $capabilities as $cap_group ) {
             foreach ( $cap_group as $cap ) {
-                    $wp_roles->add_cap( 'evoucherwp_manager', $cap );
-                    $wp_roles->add_cap( 'administrator', $cap );
+                $wp_roles->add_cap( 'evoucherwp_manager', $cap );
+                $wp_roles->add_cap( 'administrator', $cap );
 	        }
 	    }
 	}
@@ -247,6 +247,10 @@ CREATE TABLE {$wpdb->prefix}evoucherwp_code_seq (
 	 */
 	 private static function get_core_capabilities() {
 		$capabilities = array();
+
+		$capabilities[ 'core' ] = array(
+			'manage_evoucherwp'
+		);
 
 	    $capability_types = array( 'evoucher' );
 

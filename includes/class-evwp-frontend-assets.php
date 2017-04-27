@@ -56,7 +56,7 @@ class EVWP_Frontend_Scripts {
 		$suffix  = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 		// Register any scripts for later use, or used as dependencies
-		wp_register_script( 'evoucherwp-single-voucher-script',  EVoucherWP()->plugin_url() . '/assets/js/evoucher-single-voucher' . $suffix . '.js', array( 'jquery'), EVWP_VERSION );
+		wp_register_script( 'evoucherwp-single-voucher-script',  EVoucherWP()->plugin_url() . '/assets/js/evoucherwp-single-voucher' . $suffix . '.js', array( 'jquery'), EVWP_VERSION );
 
 		// CSS Styles
 		wp_register_style(  'evoucherwp-single-voucher-style', EVoucherWP()->plugin_url() . '/assets/css/evoucherwp-single-voucher.css', array(), EVWP_VERSION );

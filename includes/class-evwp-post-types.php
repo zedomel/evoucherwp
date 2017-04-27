@@ -66,7 +66,7 @@ class EVWP_Post_types {
 	            'map_meta_cap'        => true,
 	            'publicly_queryable'  => true,
 	            'exclude_from_search' => true,
-	            'show_in_menu'        => current_user_can( 'edit_evouchers' ) ? 'evoucherwp_menu' : true,
+	            'show_in_menu'        => current_user_can( 'edit_evoucher' ) ? 'evoucherwp_menu' : false,
 	            'hierarchical'        => false,
 	            'show_in_nav_menus'   => false,
 	            'rewrite'             => array( 'slug' => untrailingslashit( 'evoucher' ), 'with_front' => false, 'feeds' => true ),

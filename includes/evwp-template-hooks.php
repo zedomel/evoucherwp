@@ -27,8 +27,6 @@ add_action( 'evoucherwp_voucher_header', 'evoucherwp_voucher_header', 10 );
 
 add_action( 'evoucherwp_voucher_footer', 'evoucherwp_voucher_footer', 10 );
 
-// add_action( 'evoucherwp_print_scripts_and_styles', 'evoucherwp_print_scripts_and_styles', 10 );
-
 add_filter( 'evoucherwp_voucher_status', 'evoucherwp_voucher_status', 10, 2 );
 
 add_action( 'evoucherwp_show_download_form', 'evoucherwp_show_download_form', 10, 2 );

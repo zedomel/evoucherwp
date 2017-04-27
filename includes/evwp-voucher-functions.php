@@ -66,28 +66,30 @@ function evwp_pretty_urls() {
 function evwp_generate_voucher_code( $post_id ){
 
     $code_type = get_post_meta( $post_id, '_evoucherwp_codestype', true );
+    if ( empty( $code_type ) ){
+        $code_type = get_option( 'evoucherwp_codestype', 'random' );
+    }
+
+    $code = '';
 
     if ( $code_type === 'single' ){
-        $custom_code = get_post_meta( $post_id, '_evoucherwp_singlecode', true );
-        if ( !empty( $custom_code ) ){
-            $code = sanitize_text_field( $custom_code );
-        }
-        else{
-            $code = evwp_generate_guid( 6 );
+        $code = get_post_meta( $post_id, '_evoucherwp_singlecode', true );
+        if ( empty( $code ) ){
+            $code = get_option( 'evoucherwp_singlecode', '' );
         }
     }
     else{
         $length = get_post_meta( $post_id, '_evoucherwp_codelength', true );
         // Fix length if empty or <= 0
         if ( empty( $length ) || $length <= 0)
-            $length = 6;
+            $length = intval( get_option( 'evoucherwp_codelength', 6 ) );
         else
             $length = intval( $length );
 
         if ( $code_type == 'sequential' ){
             $code = evwp_generate_sequence_code( $post_id, $length );
         }
-        else {
+        elseif ( $code_type == 'random' ){
             $code = evwp_generate_guid( $length );
         }
     }
@@ -107,7 +109,7 @@ function evwp_generate_sequence_code( $post_id, $length ){
 
 function evwp_delete_sequence_code( $post_id ){
     global $wpdb;
-    return $wpdb->delete( $wpdb->prefix . 'evoucherwp_code_seq', array( 'post_id' => $post_id ), array( '$d' ) );
+    return $wpdb->delete( $wpdb->prefix . 'evoucherwp_code_seq', array( 'post_id' => $post_id ), array( '%d' ) );
 }
 
 // create an md5 hash of a guid

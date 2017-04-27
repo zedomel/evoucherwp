@@ -65,7 +65,6 @@ class EVWP_Autoloader {
 	 *
 	 * @param string $class
 	 */
-	//TODO: load all files
 	public function autoload( $class ) {
 		$class = strtolower( $class );
 		$file  = $this->get_file_name_from_class( $class );

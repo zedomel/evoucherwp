@@ -92,7 +92,7 @@ class EVWP_AJAX {
 		// evoucherwp_EVENT => nopriv
 		$ajax_events = array();
 
-		$ajax_events = apply_filters( 'evoucherwp_ajax_events', $ajax_events );
+		$ajax_events = apply_filters( 'evoucherwp_ajax_events', $ajax_events ); 
 
 		foreach ( $ajax_events as $ajax_event => $prop ) {
 			add_action( 'wp_ajax_evoucherwp_' . $ajax_event, array( $prop[ 'class' ], $ajax_event ) );

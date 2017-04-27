@@ -22,7 +22,7 @@ function evoucherwp_voucher_status( $status, $voucher ){
 			$email = sanitize_email( $_POST[ '_email' ] );
 			$name = sanitize_text_field( $_POST[ '_name' ] );
 			if ( !empty( $email ) && !empty( $name ) ){
-				// Add to downloads table
+				// TODO: add to downloads table
 				$status = 'valid';
 				return $status;
 			}
@@ -32,7 +32,6 @@ function evoucherwp_voucher_status( $status, $voucher ){
 }
 
 function evoucherwp_show_download_form( $voucher ){
-	error_log('oi');
 	if ( !empty( $voucher ) ){
 
 		$email = isset(  $_POST[ '_email' ] ) ? sanitize_email( $_POST[ '_email' ] ) : '';
@@ -52,7 +51,7 @@ function evoucherwp_show_download_form( $voucher ){
 // check a code address is valid for a voucher
 function evwp_voucher_is_valid( $voucher, $guid ) {
     
-    if ( empty( $voucher ) || empty( $guid ) ){
+    if ( empty( $voucher ) ){
         return false;
     }
     

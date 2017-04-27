@@ -142,30 +142,33 @@ class EVWP_Voucher {
         if ( 0 < $this->expiry && time() >= $this->expiry ) {
             return "expired";
         }
-        // if there is a start date and the tart date is in the future
+        // if there is a start date and the start date is in the future
         if ( 0 < $this->startdate && time() <  $this->startdate ) {
             return "notyetavailable";
         }
-
-        // if emails are not required
-        if ( $this->requireemail === 'no' ) {
-            return  $this->live === 'yes' ? 'valid' : 'unavailable' ;
-        } 
-        elseif ( $this->live === 'yes' ) {
-            return 'unregistered';
-        }
-        return 'unavailable';
+        
+        return $this->live === 'yes' ? 'valid' : 'unavailable';
+        
+        // // if emails are not required
+        // if ( $this->requireemail === 'no' ) {
+        //     return  $this->live === 'yes' ? 'valid' : 'unavailable' ;
+        // } 
+        // elseif ( $this->live === 'yes' ) {
+        //     return 'unregistered';
+        // }
+        // return 'unavailable';
 	}
 
 	public function can_change(){
 		$elapsed_days = intval( ( time() - $this->startdate ) / 60 / 60 / 24 );
-		$max_days_to_change = intval( get_option( '_evoucherwp_days_to_change', 0 ) );
-		return ( $this->live && time() <= $this->expiry && $elapsed_days <= $max_days_to_change );
+		$max_days_to_change = intval( get_option( 'evoucherwp_days_to_change', 0 ) );
+		$expired = time() > $this->expiry && $this->expiry > 0;
+		return ( $this->live && ! $expired && $elapsed_days < $max_days_to_change );
 	}
 
 	public function get_download_url(){
     	if ( !empty( $this->guid ) ) {
-		    return get_permalink() . "/?evoucher=" . $this->guid;
+		    return get_permalink( $this->id ) . "?evoucher=" . $this->guid;
 		}
 		return false;
 	}
