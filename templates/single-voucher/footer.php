@@ -34,7 +34,7 @@ if ( empty( $footer_content ) ){
 	<?php if ( !empty( $footer_content ) ): ?> 
 
 		<div class="footer-content">
-			<?php echo esc_html( $footer_content ); ?> 
+			<?php echo $footer_content; ?> 
 		</div>
 
 	<?php endif; ?>

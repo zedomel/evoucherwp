@@ -19,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly
 }
 
+global $voucher;
+
 // Call the_post() to get EVWP_Voucher object
 if ( have_posts() ){
 	the_post();
@@ -37,11 +39,19 @@ if ( isset( $_GET[ 'evoucher' ] ) && ! empty( $_GET[ 'evoucher' ] ) ) {
 ?> 
 
 <head>
-	<?php	do_action( 'evoucherwp_print_scripts_and_styles' ); wp_head(); ?>
+	<?php wp_head(); ?>
 
 </head>
 
 <?php
+
+// Check if general settings 
+if ( $status === 'valid' ){
+	$op_require_email = get_option( 'evoucherwp_requireemail', 'no' );
+	if ( $op_require_email === 'yes' || $voucher->requireemail === 'yes' ){
+		$status = 'unregistered';
+	}	
+}
 
 $status = apply_filters( 'evoucherwp_voucher_status', $status, $voucher );
 
@@ -78,7 +88,7 @@ do_action( 'evoucherwp_voucher_header' );
 
 /** Unregistered download */
 elseif ( $status === 'unregistered' ):
-	
+
 	get_header();
 	?>
 	<div id="content" class="site-content">

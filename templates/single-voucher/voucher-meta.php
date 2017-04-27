@@ -15,18 +15,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $post, $voucher;
 
+
+$codeprefix = $voucher->codeprefix;
+$codesuffix = $voucher->codesuffix;
+
+if ( empty( $codeprefix) ){
+	$codeprefix = get_option( 'evoucherwp_codeprefix', '' );
+}
+
+if ( empty( $codesuffix) ){
+	$codesuffix = get_option( 'evoucherwp_codesuffix', '' );
+}
+
+$expiry = $voucher->expiry;
+if ( empty( $expiry ) && $expiry !== 0 ){
+	$days_to_expiry = intval( get_option( 'evoucherwp_expiry', 0 ) );
+	$startdate = floatval( $voucher->startdate );
+	$expiry = $startdate + ( $days_to_expiry * 24 * 60 * 60 );
+}
+
 ?>
 <div class="voucher-meta">
 
-	<?php do_action( 'evoucherwp_voucher_meta_start' ); ?>
+	<?php do_action( 'evoucherwp_voucher_meta_start', $voucher ); ?>
 
 		<p><strong><?php _e( 'PIN:', 'evoucherwp' ); ?></strong>
 
-		<?php echo $voucher->codeprefix . $voucher->guid . $voucher->codesuffix; ?></p>
+		<?php echo $codeprefix . $voucher->guid . $codesuffix; ?></p>
 
-		<p><strong><?php _e( 'Valid until:', 'evoucherwp' ); ?></strong>
-		<?php echo date_i18n( get_option( 'date_format' ), $voucher->expiry ); ?></p>
+		<?php if ( $expiry > 0 ): ?>
+			<p><strong><?php _e( 'Valid until:', 'evoucherwp' ); ?></strong>
+			<?php echo date_i18n( get_option( 'date_format' ), $expiry ); ?></p>
+		<?php endif; ?>
 
-	<?php do_action( 'evoucherwp_voucher_meta_end' ); ?>
+	<?php do_action( 'evoucherwp_voucher_meta_end', $voucher ); ?>
 
 </div>

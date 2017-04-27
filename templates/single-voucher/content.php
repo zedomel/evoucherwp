@@ -16,7 +16,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="voucher-content">
-	<?php the_content();
-	do_action( 'evoucherwp_after_voucher_content' );
+	<?php 
+		do_action( 'evoucherwp_before_voucher_content' );
+
+		the_content();
+
+		do_action( 'evoucherwp_after_voucher_content' );
 	?>
 </div>
