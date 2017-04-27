@@ -106,7 +106,7 @@ class EVWP_Settings_General extends EVWP_Settings_Page {
 			array( 
 				'title'		=> __( 'Email required', 'evoucherwp' ),
 				'desc'		=> __( 'Require a valid email address to download vouchers', 'evoucherwp' ),
-				'desc_tip'	=> true,
+				'desc_tip'	=> __( '<b>Caution: by selecting this option will make all downloads to require valid email address.</b> A preferred approach is to set this option for each voucher post.', 'evoucherwp' ),
 				'default'	=> 'no',
 				'id'		=> 'evoucherwp_requireemail',
 				'type'		=> 'checkbox'

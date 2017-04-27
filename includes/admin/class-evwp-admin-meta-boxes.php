@@ -49,6 +49,37 @@ class EVWP_Admin_Meta_Boxes {
 		// Error handling (for showing errors from meta boxes on next page load)
 		add_action( 'admin_notices', array( $this, 'output_errors' ) );
 		add_action( 'shutdown', array( $this, 'save_errors' ) );
+
+		add_filter( 'get_sample_permalink_html', array( $this, 'edit_voucher_permalink' ), 10, 5);
+
+		add_filter( 'preview_post_link', array( $this, 'edit_preview_link' ), 10, 2 );
+	}
+
+	public function edit_voucher_permalink( $return, $post_id, $new_title, $new_slug, $post ){
+	    if($post->post_type == 'evoucher') {
+	    	$guid = get_post_meta( $post_id, '_evoucherwp_guid', true );
+	    	if ( !empty( $guid ) ) {
+	    		$return = preg_replace('/<a(.*)href="([^"]*)"(.*)>/', '<a$1href="$2/?evoucher=' . $guid . '"$3>', $return );
+	    		$return = str_replace('</a>', '<span>?evoucher=' . $guid . '</span></a>', $return );
+			    return $return;
+			}
+	    }
+	    return $return;
+	}
+
+	public function edit_preview_link( $preview_link, $post ){
+		if($post->post_type == 'evoucher') {
+			$guid = get_post_meta( $post->ID, '_evoucherwp_guid', true );
+	    	if ( !empty( $guid ) ) {
+				$preview_link = add_query_arg( 
+					array(
+						'evoucher'   => $guid
+					), 
+				$preview_link );
+			}
+		}
+
+		return $preview_link;
 	}
 
 	/**
@@ -81,6 +112,7 @@ class EVWP_Admin_Meta_Boxes {
 			}
 
 			echo '</div>';
+
 
 			// Clear
 			delete_option( 'evoucherwp_meta_box_errors' );

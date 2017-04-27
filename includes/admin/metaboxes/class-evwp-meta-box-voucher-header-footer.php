@@ -32,17 +32,27 @@ class EVWP_Meta_Box_Voucher_Header_Footer {
 	public static function init_header_fields() {
 
 		self::$options = apply_filters( 'evoucherwp_admin_header_footer_fields', array(
+			'_evoucherwp_use_default_header' => array(
+				'label' => __( 'Use default options', 'evoucherwp' ),
+				'show'  => false,
+				'type'  => 'checkbox',
+				'description' => __( 'When enable this voucher will use options set in Settings menu', 'evoucherwp' ),
+				'desc_tip'	=> true,
+				'name'		=> 'evoucherwp_use_default_header'
+			),
 			'_evoucherwp_header_image' => array(
 				'label' => __( 'Header image', 'evoucherwp' ),
 				'show'  => false,
 				'description' => __( 'URL to an image you want to show in the voucher header. Upload image using media uploader (Admin -> Media). It will override default settings.', 'evoucherwp' ),
 				'desc_tip'	=> true,
+				'name'		=> 'evoucherwp_header_image'
 			),
 			'_evoucherwp_header_title' => array(
 				'label' => __( 'Header title', 'evoucherwp' ),
 				'show'  => false,
 				'description' => __('It will override default settings.', 'evoucherwp' ),
 				'desc_tip'	=> true,
+				'name'		=> 'evoucherwp_header_title'
 			),
 			'_evoucherwp_footer_content' => array(
 				'label' => __( 'Footer', 'evoucherwp' ),
@@ -50,6 +60,7 @@ class EVWP_Meta_Box_Voucher_Header_Footer {
 				'type'	=> 'textarea',
 				'description' => __( 'Content to display in footer section. It will override default settings.', 'evoucherwp' ),
 				'desc_tip'	=> true,
+				'name'		=> 'evoucherwp_footer_content'
 			)
 		) );
 	}
@@ -79,6 +90,9 @@ class EVWP_Meta_Box_Voucher_Header_Footer {
 				case 'textarea':
 					evoucherwp_wp_textarea_input( $field );
 					break;
+				case 'checkbox' :
+					evoucherwp_wp_checkbox( $field );
+					break;
 				default:
 					evoucherwp_wp_text_input( $field );
 					break;
@@ -99,16 +113,26 @@ class EVWP_Meta_Box_Voucher_Header_Footer {
 
 		self::init_header_fields();
 
+		$use_default_option = false;
+		if ( isset( $_POST[ 'evoucherwp_use_default_header' ] ) && $_POST[ 'evoucherwp_use_default_header' ] === 'yes' ){
+			$use_default_option = $_POST[ 'evoucherwp_use_default_header' ] === 'yes' ;
+		}
+
 		if ( ! empty( self::$options ) ) {
 			foreach ( self::$options as $key => $field ) {
 				if ( ! isset( $field['id'] ) ){
 					$field['id'] = $key;
 				}
 				if ( isset( $_POST[ $field[ 'id' ] ] ) ){
-					update_post_meta( $post_id, $field['id'], evwp_clean( $_POST[ $field['id'] ] ) );	
+					update_post_meta( $post_id, $field['id'], evwp_clean( $_POST[ $field['name'] ] ) );	
+				}
+				elseif ( $use_default_option ){
+					update_post_meta( $post_id, $field['id'], get_option( $field[ 'name' ], '' ) );		
 				}
 			}
 		}
+		
+		update_post_meta( $post_id, '_evoucherwp_use_default_header', $use_default_option ? 'yes' : 'no' );
 		
 		clean_post_cache( $post_id );
 	}

@@ -37,7 +37,7 @@ class EVWP_Admin_Post_Types {
 
 		add_action( 'manage_evoucher_posts_custom_column', array( $this, 'render_evoucher_columns' ), 2 );
 
-		add_action( 'save_post_evoucher', array( $this, 'save_voucher' ), 10, 3) ;
+		add_action( 'save_post_evoucher', array( $this, 'save_voucher' ), 20, 3) ;
 		add_action( 'before_delete_post', array( $this, 'delete_voucher_code' ) );
 
 		// Edit post screens
@@ -65,7 +65,7 @@ class EVWP_Admin_Post_Types {
 
         global $wpdb;
 
-        if ( !isset( $post ) || empty( $post->post_content ) ){
+        if ( !isset( $post ) ){
             return;
         }
 
