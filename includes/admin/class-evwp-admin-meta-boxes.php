@@ -142,6 +142,7 @@ class EVWP_Admin_Meta_Boxes {
 	 * @param  object $post
 	 */
 	public function save_meta_boxes( $post_id, $post ) {
+
 		// $post_id and $post are required
 		if ( empty( $post_id ) || empty( $post ) || self::$saved_meta_boxes ) {
 			return;

@@ -115,12 +115,16 @@ function evoucherwp_wp_checkbox( $field ) {
 	global $thepostid, $post;
 
 	$thepostid              = empty( $thepostid ) ? $post->ID : $thepostid;
+	$cur_value = get_post_meta( $thepostid, $field['id'], true );
 	$field['class']         = isset( $field['class'] ) ? $field['class'] : 'checkbox';
 	$field['style']         = isset( $field['style'] ) ? $field['style'] : '';
 	$field['wrapper_class'] = isset( $field['wrapper_class'] ) ? $field['wrapper_class'] : '';
-	$field['value']         = isset( $field['value'] ) ? $field['value'] : get_post_meta( $thepostid, $field['id'], true );
+	$field['default']       = isset( $field['default'] ) ? $field['default'] : '';
+	$field['value']         = isset( $field['value'] ) ? $field['value'] : ( empty( $cur_value ) ? $field['default'] : $cur_value ) ;
 	$field['cbvalue']       = isset( $field['cbvalue'] ) ? $field['cbvalue'] : 'yes';
 	$field['name']          = isset( $field['name'] ) ? $field['name'] : $field['id'];
+	
+
 
 	// Custom attribute handling
 	$custom_attributes = array();

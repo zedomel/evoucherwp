@@ -73,7 +73,7 @@ function evwp_voucher_is_valid( $voucher, $guid ) {
 
 function is_voucher(){
 	global $post;
-	return $post->post_type === 'evoucher' && is_single();
+	return !empty( $post ) ? $post->post_type === 'evoucher' && is_single() : false;
 }
 
 

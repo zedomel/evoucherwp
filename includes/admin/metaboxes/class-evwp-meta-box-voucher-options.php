@@ -33,13 +33,21 @@ class EVWP_Meta_Box_Voucher_Options {
 	public static function init_options_fields() {
 
 		self::$options = apply_filters( 'evoucherwp_admin_options_fields', array(
+			'_evoucherwp_live' => array(
+				'label' => __( 'E-voucher is available', 'evoucherwp' ),
+				'show'  => false,
+				'type'  => 'checkbox',
+				'name'	=> 'evoucherwp_live',
+				'default' => 'yes'
+			),
 			'_evoucherwp_use_default' => array(
 				'label' => __( 'Use default options', 'evoucherwp' ),
 				'show'  => false,
 				'type'  => 'checkbox',
 				'description' => __( 'When enable this voucher will use options set in Settings menu', 'evoucherwp' ),
 				'desc_tip'	=> true,
-				'name'		=> 'evoucherwp_use_default'
+				'name'		=> 'evoucherwp_use_default',
+				'default'	=> 'yes'
 
 			),
 			'_evoucherwp_requireemail' => array(
@@ -47,12 +55,6 @@ class EVWP_Meta_Box_Voucher_Options {
 				'show'  => false,
 				'type'  => 'checkbox',
 				'name'	=> 'evoucherwp_requireemail'
-			),
-			'_evoucherwp_live' => array(
-				'label' => __( 'E-voucher is available', 'evoucherwp' ),
-				'show'  => false,
-				'type'  => 'checkbox',
-				'name'	=> 'evoucherwp_live'
 			),
 			'_evoucherwp_codeprefix' => array(
 				'label' => __( 'Voucher code prefix:', 'evoucherwp' ),
@@ -205,13 +207,16 @@ class EVWP_Meta_Box_Voucher_Options {
 					$field['id'] = $key;
 				}
 
-				if ( in_array( $field['id'], array( '_evoucherwp_live', '_evoucherwp_requireemail' ) ) ){
+				if ( $field['id'] === '_evoucherwp_requireemail' ){
 					if ( $use_default_option ){
 						update_post_meta( $post_id, $field['id'], get_option( $field['name'], 'no' ) );	
 					}
 					else{
-						update_post_meta( $post_id, $field['id'], 'no' );	
+						update_post_meta( $post_id, $field['id'], isset( $POST[ $field['name'] ] ) ? 'yes' : 'no' );	
 					}
+				}
+				elseif ( $field[ 'id' ] === '_evoucherwp_live' ){
+					update_post_meta( $post_id, $field['id'], isset( $_POST[ $field['name'] ] ) ? 'yes' : 'no' );
 				}
 				elseif ( ! in_array( $field[ 'id' ], array( 'evoucherwp_startdate', 'evoucherwp_expiry', 'evoucherwp_expiry_days' )  ) ) {
 						if ( $use_default_option ){

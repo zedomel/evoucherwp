@@ -79,7 +79,7 @@ class EVWP_Voucher {
 		} elseif ( in_array( $key , array( 'expiry', 'startdate', 'codelength' ) ) ){
 			$value = $value ? intval( $value ) : 0;
 		}
-
+		
 		if ( false !== $value ) {
 			$this->$key = $value;
 		}
@@ -146,7 +146,7 @@ class EVWP_Voucher {
         if ( 0 < $this->startdate && time() <  $this->startdate ) {
             return "notyetavailable";
         }
-        
+
         return $this->live === 'yes' ? 'valid' : 'unavailable';
         
         // // if emails are not required

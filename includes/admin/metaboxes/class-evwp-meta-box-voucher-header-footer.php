@@ -38,7 +38,8 @@ class EVWP_Meta_Box_Voucher_Header_Footer {
 				'type'  => 'checkbox',
 				'description' => __( 'When enable this voucher will use options set in Settings menu', 'evoucherwp' ),
 				'desc_tip'	=> true,
-				'name'		=> 'evoucherwp_use_default_header'
+				'name'		=> 'evoucherwp_use_default_header',
+				'default'	=> 'yes'
 			),
 			'_evoucherwp_header_image' => array(
 				'label' => __( 'Header image', 'evoucherwp' ),
